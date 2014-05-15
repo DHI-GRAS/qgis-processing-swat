@@ -227,19 +227,19 @@ def kf_flows(obs_file, Ass_folder, nbrch, Enddate, Startdate, RR_enddate, RR_sta
                 r = Q_obs[a[mn],2]             #Measurement std [m3/s]
 
                 z1 = x3[pt-1,i]                #Modelled flow
-
+                if isnan(Q_obs[a[mn],1])==False:
                 #Measurement operator at the state measurement
-                H1 = numpy.zeros([1,nbrch_add*3])
-                H1[0,pt-1] = 1
-                H = H1
-                #Kalman gain
-                R = r**2
-                K = dot(dot(P,H.T),(dot(dot(H,P),H.T)+R)**(-1))
-                Innov[i] = Q_obs[a[mn],1]-z1
-                PredStd[i] = math.sqrt(dot(dot(H,P),H.T)+R)
-                Loc[i] = pt
-                x3[:,i] = x3[:,i]+K.squeeze()*(Q_obs[a[mn],1]-z1)
-                P = P - dot(dot(K,H),P)
+                    H1 = numpy.zeros([1,nbrch_add*3])
+                    H1[0,pt-1] = 1
+                    H = H1
+                    #Kalman gain
+                    R = r**2
+                    K = dot(dot(P,H.T),(dot(dot(H,P),H.T)+R)**(-1))
+                    Innov[i] = Q_obs[a[mn],1]-z1
+                    PredStd[i] = math.sqrt(dot(dot(H,P),H.T)+R)
+                    Loc[i] = pt
+                    x3[:,i] = x3[:,i]+K.squeeze()*(Q_obs[a[mn],1]-z1)
+                    P = P - dot(dot(K,H),P)
 
         for v in range(0,nbrch_add):
             Pall[v,i] = math.sqrt(P[v,v])
@@ -262,19 +262,31 @@ def kf_flows(obs_file, Ass_folder, nbrch, Enddate, Startdate, RR_enddate, RR_sta
     #Adjust to one flow per day
     q2 = numpy.zeros([3*nbrch_add,days])
     for i in range(0,days):
-        q2[:,i] = x2[:,i*(1/timestep)]
+        q_temp = 0
+        for j in range(0,int(1/timestep)):
+            q_temp = q_temp + x2[:,i*(1/timestep)+j]
+        q2[:,i] = q_temp/(1/timestep)
 
-        q3 = numpy.zeros([3*nbrch_add,days])
+    q3 = numpy.zeros([3*nbrch_add,days])
     for i in range(0,days):
-        q3[:,i] = x3[:,i*(1/timestep)]
+        q_temp = 0
+        for j in range(0,int(1/timestep)):
+            q_temp = q_temp + x3[:,i*(1/timestep)+j]
+        q3[:,i] = q_temp/(1/timestep)
 
     P2 = numpy.zeros([nbrch_add,days])
     for i in range(0,days):
-        P2[:,i] = P_2[:,i*(1/timestep)]
+        q_temp = 0
+        for j in range(0,int(1/timestep)):
+            q_temp = q_temp + P_2[:,i*(1/timestep)+j]
+        P2[:,i] = q_temp/(1/timestep)
 
     P3 = numpy.zeros([nbrch_add,days])
     for i in range(0,days):
-        P3[:,i] = P_3[:,i*(1/timestep)]
+        q_temp = 0
+        for j in range(0,int(1/timestep)):
+            q_temp = q_temp + P_3[:,i*(1/timestep)+j]
+        P3[:,i] = q_temp/(1/timestep)
 
     #Creating output files for plotting function
     with open(Ass_folder + os.sep + 'Deterministic_Output.csv', 'wb') as csvfile:

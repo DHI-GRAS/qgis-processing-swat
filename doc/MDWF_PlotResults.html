@@ -6,16 +6,23 @@
   <title>Help for Plot results</title>
   </head>
   <body>
+  <H1>Plot results</H1>
    <H3>Select results folder</H3>
    Folder containing SWAT output files.
+   <H3>Temporal resolution</H3>
+   Applies for reach output only.<br>
+   Compute figures and performance statistics for discharge data on daily, weekly or monthly time scale.<br>
+   Daily and weekly statistics are computed based on daily model and observation data (IPRINT = 1 in file.cio).<br>
+   Monthly time scale applies to monthly model and observation data only (IPRINT = 0 in file.cio).
    <H3>Type of result</H3>
+   Currently REACH, SUB-BASIN, HRU and RESERVOIR is supported.
    <H3>Variable</H3>
    <H3>Reach ID</H3>
    <H3>Sub-basin ID</H3>
    <H3>HRU ID</H3>
    <H3>Select file with corresponding observations</H3>
-   If no observations are available for the chosen variable, this field can be left blank.
-   <H3>Temporal resolution</H3>
-   Compute figures and performance statistics on daily or weekly time scale.
+   If no observations are available for the chosen variable, this field can be left blank.<br>
+   Observations need to be provided as simple .csv files with the date in the first column and observation in the second column.<br>
+   Dates should be EXCEL dates converted to numbers.
   </body>
 </html>

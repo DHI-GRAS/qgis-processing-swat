@@ -31,6 +31,7 @@ class MDWF_PlotResults(GeoAlgorithm):
         self.name = "6 - Plot Results (MDWF)"
         self.group = "Model development workflow (MDWF)"
         self.addParameter(ParameterFile(MDWF_PlotResults.RES_FOLDER, "Select results folder", True))
+        self.addParameter(ParameterSelection(MDWF_PlotResults.TEMP_RES, "Temporal resolution", ['Daily','Weekly','Monthly'], False))
         self.addParameter(ParameterSelection(MDWF_PlotResults.RES_TYPE, "Type of result", RES_OUTSPECS.RESULT_TYPES, False))
         param = ParameterSelection(MDWF_PlotResults.RES_VAR, "Variable", RES_OUTSPECS.RESULT_VARIABLES , False)
         param.isAdvanced = False
@@ -45,8 +46,6 @@ class MDWF_PlotResults(GeoAlgorithm):
         param.isAdvanced = False
         self.addParameter(param)
         self.addParameter(ParameterFile(MDWF_PlotResults.RES_OBSFILE, "Select file with corresponding observations", False))
-        self.addParameter(ParameterSelection(MDWF_PlotResults.TEMP_RES, "Temporal resolution", ['Daily','Weekly'], False))
-
 
     def processAlgorithm(self, progress):
         RES_FOLDER = self.getParameterValue(MDWF_PlotResults.RES_FOLDER)
@@ -66,7 +65,10 @@ class MDWF_PlotResults(GeoAlgorithm):
             data = read_SWAT_out.read_SWAT_out(RES_FOLDER,RES_OUTSPECS.REACH_SKIPROWS,RES_OUTSPECS.REACH_OUTNAME)
             data_ex = read_SWAT_out.reach_SWAT_ts(data,REACH_ID,RES_VARCOL,RES_VAR)
             stime = read_SWAT_out.read_SWAT_time(RES_FOLDER)
-            read_SWAT_out.reach_tsplot(stime,data_ex,REACH_ID,RES_VAR,RES_UNIT,RES_FOLDER,RES_OUTSPECS.PYEX_DATE_OFFSET,RES_OBSFILE,TEMP_RES)
+            if (TEMP_RES == 2) & (stime[-1] != 0):
+				raise GeoAlgorithmExecutionException('According to master watershed file (file.cio) the reach output file is not printed with a monthly time step.')
+            else:
+				read_SWAT_out.reach_tsplot(stime,data_ex,REACH_ID,RES_VAR,RES_UNIT,RES_FOLDER,RES_OUTSPECS.PYEX_DATE_OFFSET,RES_OBSFILE,TEMP_RES)
         elif RES_TYPE == 1:
             RES_UNIT = RES_OUTSPECS.SUB_UNITS[RES_VAR]
             RES_VARCOL = RES_OUTSPECS.SUB_RES_COLS[RES_VAR]
@@ -92,7 +94,7 @@ class MDWF_PlotResults(GeoAlgorithm):
             data = read_SWAT_out.read_SWAT_out(RES_FOLDER,RES_OUTSPECS.RSV_SKIPROWS,RES_OUTSPECS.RSV_OUTNAME)
             (data_ex, RSV_ID) = read_SWAT_out.rsv_SWAT_ts(RES_FOLDER,data,SUB_ID,RES_VARCOL,RES_VAR)
             stime = read_SWAT_out.read_SWAT_time(RES_FOLDER)
-            read_SWAT_out.rsv_tsplot(stime,data_ex,SUB_ID,RSV_ID,RES_VAR,RES_UNIT,RES_FOLDER,RES_OUTSPECS.PYEX_DATE_OFFSET,RES_OBSFILE)			
+            read_SWAT_out.rsv_tsplot(stime,data_ex,SUB_ID,RSV_ID,RES_VAR,RES_UNIT,RES_FOLDER,RES_OUTSPECS.PYEX_DATE_OFFSET,RES_OBSFILE)
         else:
             raise GeoAlgorithmExecutionException('Result type not supported at the moment')
 

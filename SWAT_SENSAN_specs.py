@@ -8,13 +8,13 @@ class SWAT_SENSAN_specs():
         # Modify this class to change settings for SWAT-PEST interaction
 
         # Folder where PEST executables are stored. Adjust depending on installation
-        self.PESTexeFolder = 'c:\\Program Files (x86)\\PEST'
+        self.PESTexeFolder = 'c:\\Program Files(x86)\\MapWindow\\Plugins\\MWSWAT2009\\PEST' ##'c:\\Program Files (x86)\\PEST_13'
 
         # SENSAN control file defaults
 
         self.CFfirstline = 'scf'
 
-        self.SCREENDISP = 'verbose'
+        self.SCREENDISP = 'noverbose'
 
         self.NPARGP = len(parspecs.PARAMETERS)
 

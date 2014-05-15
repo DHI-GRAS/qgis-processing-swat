@@ -19,7 +19,7 @@ def BaseRun(Ass_folder, nbrch, Enddate, Startdate):
     #Getting input data and parameters
     (X,K,drainsTo,alphaerr,q,RR,nbrch_add, timestep,loss) = LoadData(Ass_folder, nbrch, Enddate, Startdate)
 
-    #Fitting the precipitation to the timestep
+    #Fitting the RR to the timestep
     Inputs = numpy.zeros([days*(1/timestep),nbrch_add])
     for i in range(0,days):
         for k in range (0,int(1/timestep)):
@@ -37,15 +37,10 @@ def BaseRun(Ass_folder, nbrch, Enddate, Startdate):
     #Adjust to one flow per day
     q_out = numpy.zeros([nbrch_add,days])
     for i in range(0,days):
-        q_out[:,i] = x[:,i*(1/timestep)]
-
-##    #Adjust to one flow per day by averaging
-##    q_out = numpy.zeros([nbrch_add,days])
-##    for i in range(0,days):
-##        q_out_temp = 0
-##        for j in range(0,int(1/timestep)):
-##            q_out_temp = q_out_temp + x[:,i*(1/timestep)+j] ## -j
-##        q_out[:,i] = q_out_temp/(1/timestep)
+        q_out_temp = 0
+        for j in range(0,int(1/timestep)):
+            q_out_temp = q_out_temp + x[:,i*(1/timestep)+j]
+        q_out[:,i] = q_out_temp/(1/timestep)
 
     return(q_out)
 
@@ -56,6 +51,7 @@ def ErrorModel_discharge(obs_file, Ass_folder, nbrch, Enddate, Startdate):
     Q_obs = ReadObsFlowsAss(obs_file)
     Q_obs[:,0] = Q_obs[:,0] + OUTSPECS.PYEX_DATE_OFFSET
     Q_obs = Q_obs[find(Q_obs[:,0] >= Startdate),:]
+    Q_obs_Startdate = Q_obs[0,0]
     if sum(Q_obs[:,0] <= Enddate-8) > 0:
             Q_obs = Q_obs[find(Q_obs[:,0] <= Enddate-8),:]
 
@@ -68,7 +64,8 @@ def ErrorModel_discharge(obs_file, Ass_folder, nbrch, Enddate, Startdate):
     for n in range(0,len(reachID)):
         #Get simulated data
         q_out = BaseRun(Ass_folder, nbrch, Enddate, Startdate)
-        sim = q_out[int(reachID[n])-1,:]
+        DeltaStart = Q_obs_Startdate-Startdate
+        sim = q_out[int(reachID[n])-1,DeltaStart:]
 
         #Excluding zeroflow and missing data
         Q_obs[find(numpy.isnan(Q_obs[:,1])==1)] = -1
@@ -80,11 +77,16 @@ def ErrorModel_discharge(obs_file, Ass_folder, nbrch, Enddate, Startdate):
         # Estimate alpha
         x = ts[0:-1]
         y = ts[1:]
-        p = polyfit(x,y,1)
-        alpha = p[0]
+        N = len(x)
+        Sxx = sum(x**2.)-sum(x)**2./N
+        Syy = sum(y**2.)-sum(y)**2./N
+        Sxy = sum(x*y)-sum(x)*sum(y)/N
+        a = Sxy/Sxx
+        b = mean(y)-a*mean(x)
+        alpha = a
 
         # Estimate sigma from the residuals of the regression.
-        yhat = polyval(p,x)
+        yhat = a*x + b
         sigma = std(y-yhat)
 
         with open(Ass_folder + os.sep + 'ErrorModelReach' + str(int(reachID[n])) + '.txt', 'wb') as csvfile:

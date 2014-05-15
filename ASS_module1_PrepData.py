@@ -134,16 +134,16 @@ def GetMuskingumParameters(nbrch,src_folder):
 
     return(X,K)
 
-def GetInput(src_folder,nbrch,header):
+def GetInput(src_folder,nbrch,header,Startdate,Enddate):
     """Getting the runoff from the output.sub file"""
 
     filename = src_folder + os.sep + 'output.sub'
-    deli= [6,4,9,5,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
+    deli= [6,4,9,6,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
     area = numpy.genfromtxt(filename, delimiter=deli, skip_header = header, usecols=4)
     data = numpy.genfromtxt(filename, delimiter=deli, skip_header = header, usecols=13)
 
     totsub = nbrch                          #Total number of subbasins in the SWAT model
-    days = int(Enddate-Startdate)            #Number of days for which the data should be read. Has to be <= than the total number of days simulated
+    days = int(Enddate-Startdate)+1         #Number of days for which the data should be read. Has to be <= than the total number of days simulated
     WYLD_Qmm = numpy.zeros([days,totsub])
     for p in range(0,totsub):
         for i in range(0,days):
@@ -197,7 +197,7 @@ def CreateTextFiles(nbrch, src_folder, Ass_folder, header, Startdate, Enddate):
         for k in range(0,nbrch):
             file_writer.writerow(q[k])
 
-    (RR) = GetInput(src_folder,nbrch,header)
+    (RR) = GetInput(src_folder,nbrch,header,Startdate,Enddate)
     days = int(Enddate - Startdate)+1  #Number of days for which the data should be read.
     startdate = num2date(Startdate)
     dates = [startdate + timedelta(days=i) for i in range(0,days)]
@@ -206,7 +206,7 @@ def CreateTextFiles(nbrch, src_folder, Ass_folder, header, Startdate, Enddate):
     for j in range(0,nbrch):
         RR_reach = RR[0:days,j]
         f = open(Ass_folder + os.sep + 'runoff' + str(j+1) + ".txt", "w")
-        f.write('Dates' + '       ' + 'Runoff [m3/s]'+ '\r\n')
+        f.write('Dates' + '       ' + 'Runoff [m3/s]'+ '\n')
         for k in range(0,len(RR_reach)):
-            f.write(str(dates[k])[0:10]+ ' ' +str(RR_reach[k])+'\r\n')
+            f.write(str(dates[k])[0:10]+ ' ' +str(RR_reach[k])+'\n')
         f.close

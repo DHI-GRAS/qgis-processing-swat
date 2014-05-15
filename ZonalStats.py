@@ -84,7 +84,13 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
             V_Xmin = math.floor(layer.extent().xMinimum())-(R_Xres/2)
             V_Xmax = math.ceil(layer.extent().xMaximum())+(R_Xres/2)
             V_Ymin = math.floor(layer.extent().yMinimum())+(R_Yres/2)
-            V_Ymax = math.ceil(layer.extent().yMaximum())-(R_Xres/2)
+            if layer.extent().yMinimum() < V_Ymin:
+                V_Ymin = math.floor(layer.extent().yMinimum())-(R_Yres/2)
+            V_Ymax = math.ceil(layer.extent().yMaximum())-(R_Yres/2)
+            if layer.extent().yMaximum() > V_Ymax:
+                V_Ymax = math.ceil(layer.extent().yMaximum())+(R_Yres/2)
+##            V_Ymin = math.floor(layer.extent().yMinimum())+(R_Yres/2)
+##            V_Ymax = math.ceil(layer.extent().yMaximum())-(R_Yres/2)
             extent = str(V_Xmin)+","+str(V_Xmax)+","+str(V_Ymin)+","+str(V_Ymax)
             OutRName = model_folder + os.sep + model_name + '_Raster.tif'
             param = {'input':InVName, 'use':0, 'column':sb_column, 'GRASS_REGION_PARAMETER':extent, 'GRASS_REGION_CELLSIZE_PARAMETER':subcatchmap_res, 'output':OutRName}

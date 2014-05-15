@@ -49,7 +49,7 @@ def LoadData(Ass_folder, nbrch, Enddate, Startdate):
         q[:,i] = data
 
     #Getting the runoff from runoff text files
-    days = int(Enddate-Startdate)
+    days = int(Enddate-Startdate)+1
     RR = numpy.zeros([days,nbrch])
 
     for i in range(0,nbrch):
@@ -120,7 +120,7 @@ def LoadData(Ass_folder, nbrch, Enddate, Startdate):
         q_add = numpy.zeros([nbrch+len(new_reaches),nbrch+len(new_reaches)])
 
 
-        for i in range (0,nbrch):
+        for i in range(0,nbrch):
             alphaerr_add[i] = alphaerr[i]
             q_add[i,i] = q[i,i]
             K_add[i] = K_temp[i]
@@ -138,7 +138,7 @@ def LoadData(Ass_folder, nbrch, Enddate, Startdate):
             K_add[nbrch+j] = new_K[j]
 
         #Creating the new drains to array (drainsTo_add) and splitting the runoff input and losses among the new subreaches
-        for i in range (1,nbrch+1):
+        for i in range(1,nbrch+1):
             fr = where(add_reaches==i)
             if len(fr[0])>0:
                 #Divide the losses and runoff to fit the new reahces
@@ -178,9 +178,6 @@ def LoadData(Ass_folder, nbrch, Enddate, Startdate):
             loss = loss_add
     else:
         nbrch_add = nbrch
-
-##    nbrch_add = nbrch
-##    timestep = 1.0
 
     return X,K,drainsTo,alphaerr,q,RR,nbrch_add,timestep,loss
 

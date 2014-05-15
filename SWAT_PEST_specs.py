@@ -8,7 +8,7 @@ class SWAT_PEST_specs():
         # Modify this class to change settings for SWAT-PEST interaction
 
         # Folder where PEST executables are stored. Adjust depending on installation
-        self.PESTexeFolder = 'c:\\Program Files (x86)\\PEST' ##'h:\\Tigernet\\PEST\\Code'
+        self.PESTexeFolder = 'c:\\Program Files(x86)\\MapWindow\\Plugins\\MWSWAT2009\\PEST' ##'c:\\Program Files (x86)\\PEST_13'
 
         # Parameter identifier used in PEST template files
         self.ptf = '$'

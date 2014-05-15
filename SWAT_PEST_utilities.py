@@ -4,6 +4,7 @@ from SWAT_output_format_specs import SWAT_output_format_specs
 import numpy
 import os
 import datetime
+from dateutil.relativedelta import *
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from read_SWAT_out import read_SWAT_time
 import matplotlib
@@ -64,7 +65,8 @@ def create_PEST_template(src_folder, SWATparameter, parameter_name, subid, hruid
         raise GeoAlgorithmExecutionException('SWAT input file ' + SWAT_filename + ' not found in source directory')
     return TEMPLATE_filename, SWAT_filename
 
-def create_PEST_instruction(src_folder, obsfile, obsgroup, reachid, nreaches):
+##def create_PEST_instruction(src_folder, obsfile, obsgroup, reachid, nreaches, tmpres):
+def create_PEST_instruction(src_folder, obsfile, obsgroup, nreaches, tmpres):
     specs = SWAT_output_format_specs()
     pestspecs = SWAT_PEST_specs()
     obsdata =  numpy.genfromtxt(obsfile, delimiter = ',', skiprows=0, missing_values = 'NaN')
@@ -76,7 +78,6 @@ def create_PEST_instruction(src_folder, obsfile, obsgroup, reachid, nreaches):
         startdate = datetime.date(int(SWAT_time_info[1]+SWAT_time_info[4]),1,1)
     endyear = datetime.date(int(SWAT_time_info[1]+SWAT_time_info[0]-1),1,1)
     enddate = endyear + datetime.timedelta(days=int(SWAT_time_info[3])-1)
-    tsteps = int((enddate-startdate).days) + 1
     insname = obsfile.split('.')[0] + '_' + obsfile.split('.')[1] + '.ins'
     insfile = open(insname,'w')
     insfile.writelines('pif ' + pestspecs.pif + '\n')
@@ -84,19 +85,71 @@ def create_PEST_instruction(src_folder, obsfile, obsgroup, reachid, nreaches):
     obsblockname = obsfile.split('.')[0] + '_' + obsfile.split('.')[1] + '_observation_block.obf'
     obsblockfile = open(obsblockname,'w')
     obsid = 1
-    for i in range(0,tsteps):
-        currentdate = startdate + datetime.timedelta(i)
-        currentdatenum = matplotlib.dates.date2num(currentdate)
-        obs = obsdata[obsdata[:,0]==currentdatenum,1]
-        obsw = obsdata[obsdata[:,0]==currentdatenum,2]
-        obsw = 1./numpy.power(obsw,2)
-        if ~numpy.isnan(obs):
-            obsblockfile.writelines('reach_' + str(reachid) + '_' + str(obsid) + ' ' + str(obs[0]) + ' ' + str(obsw[0]) + ' ' + obsgroup + '\n')
-            insfile.writelines('l' + str(reachid) + ' [' + 'reach_' + str(reachid) + '_' + str(obsid) + ']' + str(pestspecs.flowoutinicol) + ':' + str(pestspecs.flowoutendcol) + '\n')
-            if reachid < nreaches:
-                insfile.writelines('l' + str(nreaches-reachid) + '\n')
-            obsid = obsid + 1
-        else:
-            insfile.writelines('l' + str(nreaches) + '\n')
+    if tmpres == 0:
+        tsteps = int((enddate-startdate).days) + 1
+        for i in range(0,tsteps):
+            currentdate = startdate + datetime.timedelta(i)
+            currentdatenum = matplotlib.dates.date2num(currentdate)
+            obs = obsdata[obsdata[:,0]==currentdatenum,1]
+            obsw = obsdata[obsdata[:,0]==currentdatenum,2]
+            obsw = 1./numpy.power(obsw,2)
+            try:
+                reachid = int(obsdata[obsdata[:,0]==currentdatenum,3][0])
+            except:
+                pass
+            if ~numpy.isnan(obs):
+                obsblockfile.writelines('reach_' + str(reachid) + '_' + str(obsid) + ' ' + str(obs[0]) + ' ' + str(obsw[0]) + ' ' + obsgroup + '\n')
+                insfile.writelines('l' + str(reachid) + ' [' + 'reach_' + str(reachid) + '_' + str(obsid) + ']' + str(pestspecs.flowoutinicol) + ':' + str(pestspecs.flowoutendcol) + '\n')
+                if reachid < nreaches:
+                    insfile.writelines('l' + str(nreaches-reachid) + '\n')
+                obsid = obsid + 1
+            else:
+                insfile.writelines('l' + str(nreaches) + '\n')
+    elif tmpres == 1:
+        tsteps = int((enddate-startdate).days) + 1
+        currentyear = startdate
+        while (currentyear <= endyear):
+            if currentyear == endyear:
+                for m in range(0,enddate.month):
+                    currentdate = currentyear + relativedelta(months=+m)
+                    currentdatenum = matplotlib.dates.date2num(currentdate)
+                    obs = obsdata[obsdata[:,0]==currentdatenum,1]
+                    obsw = obsdata[obsdata[:,0]==currentdatenum,2]
+                    obsw = 1./numpy.power(obsw,2)
+                    try:
+                        reachid = int(obsdata[obsdata[:,0]==currentdatenum,3][0])
+                    except:
+                        pass
+                    if ~numpy.isnan(obs):
+                        obsblockfile.writelines('reach_' + str(reachid) + '_' + str(obsid) + ' ' + str(obs[0]) + ' ' + str(obsw[0]) + ' ' + obsgroup + '\n')
+                        insfile.writelines('l' + str(reachid) + ' [' + 'reach_' + str(reachid) + '_' + str(obsid) + ']' + str(50) + ':' + str(61) + '\n')
+                        if reachid < nreaches:
+                            insfile.writelines('l' + str(nreaches-reachid) + '\n')
+                        obsid = obsid + 1
+                    else:
+                        insfile.writelines('l' + str(nreaches) + '\n')
+                insfile.writelines('l' + str(nreaches) + '\n')
+                currentyear = currentyear + relativedelta(years=+1)
+            else:
+                for m in range(0,12):
+                    currentdate = currentyear + relativedelta(months=+m)
+                    currentdatenum = matplotlib.dates.date2num(currentdate)
+                    obs = obsdata[obsdata[:,0]==currentdatenum,1]
+                    obsw = obsdata[obsdata[:,0]==currentdatenum,2]
+                    obsw = 1./numpy.power(obsw,2)
+                    try:
+                        reachid = int(obsdata[obsdata[:,0]==currentdatenum,3][0])
+                    except:
+                        pass
+                    if ~numpy.isnan(obs):
+                        obsblockfile.writelines('reach_' + str(reachid) + '_' + str(obsid) + ' ' + str(obs[0]) + ' ' + str(obsw[0]) + ' ' + obsgroup + '\n')
+                        insfile.writelines('l' + str(reachid) + ' [' + 'reach_' + str(reachid) + '_' + str(obsid) + ']' + str(50) + ':' + str(61) + '\n')
+                        if reachid < nreaches:
+                            insfile.writelines('l' + str(nreaches-reachid) + '\n')
+                        obsid = obsid + 1
+                    else:
+                        insfile.writelines('l' + str(nreaches) + '\n')
+                insfile.writelines('l' + str(nreaches) + '\n')
+                currentyear = currentyear + relativedelta(years=+1)
 
     return insname, obsblockname

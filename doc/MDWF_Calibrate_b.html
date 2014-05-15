@@ -10,13 +10,12 @@
    Instruction files tell PEST where to find simulated observations. At the moment, only river discharge observations are supported by the module.
    <H3>Select model source folder</H3>
    Folder where instruction file will be saved to.
-   <H3>File with observation data (time, obs, error)</H3>
-   River discharge observations need to be provided as simple .csv files with the date in the first column, the discharge (m3/s) in the second column and the error of the observation in the third column. Dates should be EXCEL dates converted to numbers. 
+   <H3>Select model description file</H3>
+   <H3>File with observation data (time, obs, error, reach ID)</H3>
+   River discharge observations need to be provided as simple .csv files with the date in the first column, the discharge (m3/s) in the second column, the error of the observation in the third column and corresponding reach ID in the fourth column. Dates should be EXCEL dates converted to numbers. 
    <H3>PEST name of observation group</H3>
-   Name of obervation group which the observed data should be long to.
-   <H3>Subbasin corresponding to observations</H3>
-   Subbasin ID corresponding to observations.
-   <H3>Number of subbasins in the model</H3>
-   The total number of subbasins in the model.
+   Name of observation group which the observed data should be long to.
+   <H3>Temporal resolution of reach output and observation data</H3>
+   Choose the temporal resolution corresponding to the SWAT reach output file and observation data. The SWAT reach output file can have either daily or monthly time steps. If using monthly time steps the data of the observation data should be the 1st of every month.
   </body>
 </html>

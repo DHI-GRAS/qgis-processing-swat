@@ -60,7 +60,7 @@ def Results(obs_file, IssueDate, Startdate, Enddate, Ass_folder, rch_ID):
             obstimes = obsdata[:,0]
             obs_dates = obstimes
             p2, = plt.plot_date(obs_dates, obsdata[:,1], color='red', marker = '.')
-            plt.legend([p1,p2],['Assimilated Run','Observed'],loc='upper left')
+            plt.legend([p1,p2],['Assimilated Run','Observed'])
         plt.legend(loc=0)
         grid(True)
         grid(True)
@@ -72,7 +72,7 @@ def Results(obs_file, IssueDate, Startdate, Enddate, Ass_folder, rch_ID):
         p[30]= str(num2date(Enddate-8))[0:10]
         plt.xticks(numpy.arange(dates[0],dates[-1]+1), p, size='xx-small')
         plt.xlim([Startdate+20, Enddate])
-        plt.ylim([0,up_bound_ass[-1]])
+        plt.ylim([0,max(up_bound_ass[~numpy.isnan(up_bound_ass)])+5])
         figname = Ass_folder + os.sep + 'Assimilation_Results_reach' + str(int(reachID[n])) + '_'+ IssueDate +'.pdf'
         plt.savefig(figname)
         plt.show()
