@@ -1,33 +1,33 @@
 import os
 from PyQt4.QtGui import *
 from processing.core.AlgorithmProvider import AlgorithmProvider
-from processing_WG9HM.WG9HMAlgorithm import WG9HMAlgorithm
+from processing_SWAT.WG9HMAlgorithm import WG9HMAlgorithm
 from processing.script.WrongScriptException import WrongScriptException
 
 # Add preloaded algs here
-from processing_WG9HM.OSFWF_GetGfsData import OSFWF_GetGfsData
-from processing_WG9HM.OSFWF_GetRfeData import OSFWF_GetRfeData
-from processing_WG9HM.OSFWF_GetECMWFData import OSFWF_GetECMWFData
-from processing_WG9HM.OSFWF_UpdateModelClimateData import OSFWF_UpdateModelClimateData
-from processing_WG9HM.OSFWF_RunSWAT import OSFWF_RunSWAT
-from processing_WG9HM.OSFWF_Assimilate_a import OSFWF_Assimilate_a
-from processing_WG9HM.OSFWF_Assimilate_b import OSFWF_Assimilate_b
-from processing_WG9HM.OSFWF_Assimilate_c import OSFWF_Assimilate_c
-from processing_WG9HM.OSFWF_Assimilate_d import OSFWF_Assimilate_d
-from processing_WG9HM.OSFWF_PlotResults import OSFWF_PlotResults
-from processing_WG9HM.MDWF_DevSWAT import MDWF_DevSWAT
-from processing_WG9HM.MDWF_GenModelFiles import MDWF_GenModelFiles
-from processing_WG9HM.MDWF_GenModelClimateData import MDWF_GenModelClimateData
-from processing_WG9HM.MDWF_RunSWAT import MDWF_RunSWAT
-from processing_WG9HM.MDWF_PlotResults import MDWF_PlotResults
-from processing_WG9HM.MDWF_Calibrate_a import MDWF_Calibrate_a
-from processing_WG9HM.MDWF_Calibrate_b import MDWF_Calibrate_b
-from processing_WG9HM.MDWF_Calibrate_c import MDWF_Calibrate_c
-from processing_WG9HM.MDWF_Calibrate_d import MDWF_Calibrate_d
-from processing_WG9HM.MDWF_Sensan_a import MDWF_Sensan_a
-from processing_WG9HM.MDWF_Sensan_b import MDWF_Sensan_b
-from processing_WG9HM.MDWF_Sensan_c import MDWF_Sensan_c
-from processing_WG9HM.MDWF_Sensan_d import MDWF_Sensan_d
+from processing_SWAT.OSFWF_GetGfsData import OSFWF_GetGfsData
+from processing_SWAT.OSFWF_GetRfeData import OSFWF_GetRfeData
+from processing_SWAT.OSFWF_GetECMWFData import OSFWF_GetECMWFData
+from processing_SWAT.OSFWF_UpdateModelClimateData import OSFWF_UpdateModelClimateData
+from processing_SWAT.OSFWF_RunSWAT import OSFWF_RunSWAT
+from processing_SWAT.OSFWF_Assimilate_a import OSFWF_Assimilate_a
+from processing_SWAT.OSFWF_Assimilate_b import OSFWF_Assimilate_b
+from processing_SWAT.OSFWF_Assimilate_c import OSFWF_Assimilate_c
+from processing_SWAT.OSFWF_Assimilate_d import OSFWF_Assimilate_d
+from processing_SWAT.OSFWF_PlotResults import OSFWF_PlotResults
+from processing_SWAT.MDWF_DevSWAT import MDWF_DevSWAT
+from processing_SWAT.MDWF_GenModelFiles import MDWF_GenModelFiles
+from processing_SWAT.MDWF_GenModelClimateData import MDWF_GenModelClimateData
+from processing_SWAT.MDWF_RunSWAT import MDWF_RunSWAT
+from processing_SWAT.MDWF_PlotResults import MDWF_PlotResults
+from processing_SWAT.MDWF_Calibrate_a import MDWF_Calibrate_a
+from processing_SWAT.MDWF_Calibrate_b import MDWF_Calibrate_b
+from processing_SWAT.MDWF_Calibrate_c import MDWF_Calibrate_c
+from processing_SWAT.MDWF_Calibrate_d import MDWF_Calibrate_d
+from processing_SWAT.MDWF_Sensan_a import MDWF_Sensan_a
+from processing_SWAT.MDWF_Sensan_b import MDWF_Sensan_b
+from processing_SWAT.MDWF_Sensan_c import MDWF_Sensan_c
+from processing_SWAT.MDWF_Sensan_d import MDWF_Sensan_d
 
 class WG9HMAlgorithmProvider(AlgorithmProvider):
 
