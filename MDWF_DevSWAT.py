@@ -26,8 +26,7 @@ class MDWF_DevSWAT(GeoAlgorithm):
 
         #MapWindow_path = 'C:\Program Files (x86)\MapWindow\MapWindow.exe'
         MapWindow_path = os.path.join(WG9HMUtils.mapwindowPath(),'MapWindow.exe')
-        subprocess.call([MapWindow_path])
-
+        subprocess.Popen([MapWindow_path])
 
     def getIcon(self):
         return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
