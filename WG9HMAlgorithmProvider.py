@@ -2,7 +2,9 @@ import os
 from PyQt4.QtGui import *
 from processing.core.AlgorithmProvider import AlgorithmProvider
 from processing_SWAT.WG9HMAlgorithm import WG9HMAlgorithm
+from processing_SWAT.WG9HMUtils import WG9HMUtils
 from processing.script.WrongScriptException import WrongScriptException
+from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 # Add preloaded algs here
 from processing_SWAT.OSFWF_GetGfsData import OSFWF_GetGfsData
@@ -42,6 +44,9 @@ class WG9HMAlgorithmProvider(AlgorithmProvider):
 
     def initializeSettings(self):
         AlgorithmProvider.initializeSettings(self)
+        ProcessingConfig.addSetting(Setting(self.getDescription(),
+                    WG9HMUtils.MAPWINDOW_FOLDER, 'MapWindow folder',
+                    WG9HMUtils.mapwindowPath()))
 
     def unload(self):
         AlgorithmProvider.unload(self)
