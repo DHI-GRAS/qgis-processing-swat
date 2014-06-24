@@ -102,7 +102,7 @@ class MDWF_GenModelFiles(GeoAlgorithm):
         Subbasin_filename = model.Path + os.sep + model.desc['SubbasinColumn'] + '.txt'
         processing.runalg("grass:v.db.select",model.Path+os.sep+model.desc['Shapefile'],1,model.desc['SubbasinColumn'],False,",","","","",False,False,extent,-1, 0.0001, Subbasin_filename)
 
-        layer = dataobejcts.getObjectFromUri(model.Path+os.sep+model.desc['Centroidfile'])
+        layer = dataobjects.getObjectFromUri(model.Path+os.sep+model.desc['Centroidfile'])
         extent = str(layer.extent().xMinimum())+","+str(layer.extent().xMaximum())+","+str(layer.extent().yMinimum())+","+str(layer.extent().yMaximum())
         Lat_filename = model.Path + os.sep + model.desc['LatColumn'] + '.txt'
         processing.runalg("grass:v.db.select",model.Path+os.sep+model.desc['Centroidfile'],1,model.desc['LatColumn'],False,",","","","",False,False,extent,-1, 0.0001, Lat_filename)

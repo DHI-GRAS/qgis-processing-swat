@@ -24,11 +24,12 @@ def kf_flows(obs_file, Ass_folder, nbrch, Enddate, Startdate, RR_enddate, RR_sta
     #Getting the observed data for the assimilation
     if os.path.isfile(obs_file):
         Q_obs = ReadObsFlowsAss(obs_file)
+        Q_obs = Q_obs[find(numpy.isnan(Q_obs[:,1])==0),:]
         Q_obs[:,0] = Q_obs[:,0] + OUTSPECS.PYEX_DATE_OFFSET
         if sum(Q_obs[:,0] >= Startdate) > 0:
             Q_obs = Q_obs[find(Q_obs[:,0] >= Startdate),:]
         if sum(Q_obs[:,0] <= Enddate-8) > 0:
-            Q_obs = Q_obs[find(Q_obs[:,0] <= Enddate-8),:]
+            Q_obs = Q_obs[find(Q_obs[:,0] <= Enddate),:]
 
     #Getting input data and parameters
     (X,K,drainsTo,alphaerr,q,RR,nbrch_add, timestep,loss) = LoadData(Ass_folder, nbrch, RR_enddate, RR_startdate)

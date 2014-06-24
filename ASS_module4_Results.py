@@ -44,7 +44,7 @@ def Results(obs_file, IssueDate, Startdate, Enddate, Ass_folder, rch_ID):
 
         # Create plot
         dates = numpy.arange(Startdate, Startdate + len(q_ass)/(1/timestep),timestep)
-        fig = plt.figure()
+        fig = plt.figure(figsize=(12,6))
         plt.title('Assimilation results for reach  '+str(int(reachID[n])), fontsize=12)
         plt.ylabel('Discharge [$m^3/s$]')
         p1, = plt.plot_date(dates, q_ass, linestyle='-',color='green', marker = 'None')
@@ -55,23 +55,23 @@ def Results(obs_file, IssueDate, Startdate, Enddate, Ass_folder, rch_ID):
             obsdata = Q_obs[find(Q_obs[:,3]==int(reachID[n])),:]
             if sum(obsdata[:,0] >= Startdate) > 0:
                 obsdata = obsdata[find(obsdata[:,0] >= Startdate),:]
-            if sum(obsdata[:,0] <= Enddate-8) > 0:
-                obsdata = obsdata[find(obsdata[:,0] <= Enddate-8),:]
+            if sum(obsdata[:,0] <= Enddate) > 0:
+                obsdata = obsdata[find(obsdata[:,0] <= Enddate),:]
             obstimes = obsdata[:,0]
             obs_dates = obstimes
             p2, = plt.plot_date(obs_dates, obsdata[:,1], color='red', marker = '.')
             plt.legend([p1,p2],['Assimilated Run','Observed'])
         plt.legend(loc=0)
-        grid(True)
-        grid(True)
+#        grid(True)
+#        grid(True)
         ax1 = fig.add_subplot(111)
         ax1.fill_between(dates, low_bound_ass, up_bound_ass, color='green',alpha=.3)
-        p = []
-        for i in range(-30,9):
-            p.append(str(i))
-        p[30]= str(num2date(Enddate-8))[0:10]
-        plt.xticks(numpy.arange(dates[0],dates[-1]+1), p, size='xx-small')
-        plt.xlim([Startdate+20, Enddate])
+#        p = []
+#        for i in range(-30,9):
+#            p.append(str(i))
+#        p[30]= str(num2date(Enddate-8))[0:10]
+#       plt.xticks(numpy.arange(dates[0],dates[-1]+1), p, size='xx-small')
+        plt.xlim([Enddate-90, Enddate])
         plt.ylim([0,max(up_bound_ass[~numpy.isnan(up_bound_ass)])+5])
         figname = Ass_folder + os.sep + 'Assimilation_Results_reach' + str(int(reachID[n])) + '_'+ IssueDate +'.pdf'
         plt.savefig(figname)
