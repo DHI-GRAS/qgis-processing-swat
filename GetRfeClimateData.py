@@ -9,7 +9,7 @@ import osr
 import shutil
 import sys
 
-def RfeImportYear(year, TargetDirectory, log_file, progress, iteration, number_of_iterations, subsetExtent):
+def RfeImportYear(year, TargetDirectory, log_file, progress, iteration, number_of_iterations, subset_extent):
     """Importing and extracting FEWS RFE from web server for a given year."""
     # Set initial values
     iteration += 1
@@ -110,7 +110,7 @@ def RfeImportDays(startdate, enddate, TargetDirectory, log_file, progress, itera
 
 def Rfe2GeoTIFF_WGS84(BIL_filelist, dst_folder, log_file, progress, iteration, number_of_iterations, subset_extent):
     """OBS: Files must be in WGS84 """
-    
+
     iteration +=1
     progress.setConsoleInfo("Translating to GeoTIFF...")
     for BIL_filename in BIL_filelist:
@@ -125,15 +125,15 @@ def Rfe2GeoTIFF_WGS84(BIL_filelist, dst_folder, log_file, progress, iteration, n
             call_gdal_translate(BIL_filename, TIFF_filename, subset_extent, progress)
         except Exception, e:
             progress.setText('Cannot remove existing file '+TIFF_filename+'. No update done on that file.')
-            
+
     progress.setPercentage(iteration/number_of_iterations*100)
     return iteration
-    
+
 def call_gdal_translate(in_filename, out_filename, newExtent, progress):
-    
+
     try:
         inlayer = None
-        
+
         try:
             # It would be easier to get the raster extents using QgsRasterLayer and not GDAL but
             # there is a bug in QgsRasterLayer that crashes QGIS "randomly" when opening a layer.
@@ -143,12 +143,12 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
         except:
             progress.setText('Cannot get layer info ! Not subsetting.')
             return
-            
+
         if not inlayer:
             progress.setText('Cannot get layer info !! Not subsetting.')
             return
-            
-        
+
+
         # get the raster extent coordinates using GDAL
         geoinformation = inlayer.GetGeoTransform(can_return_null = True)
 
@@ -167,7 +167,7 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
         else:
             progress.setText('Cannot get layer info !!! Not subsetting.')
             inlayer = None
-            return  
+            return
         inlayer = None
 
         # get the minimum extent of the subset extent and the file extent
@@ -177,18 +177,18 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
                 [nxmin, nxmax, nymin, nymax] = [float(i) for i in extents]
             except ValueError:
                 progress.setText('Invalid subset extent ! Not subsetting.')
-                return    
+                return
             xmin = max(nxmin, xmin)
             xmax = min(nxmax, xmax)
             ymin = max(nymin, ymin)
             ymax = min(nymax, ymax)
-                
+
         subsetExtent = str(xmin)+","+str(xmax)+","+str(ymin)+","+str(ymax)
-                  
+
         # call gdal_translate
         progress.setText('Processing '+out_filename)
         param = {'INPUT':in_filename, 'OUTSIZE':100, 'OUTSIZE_PERC':True, 'NO_DATA':"none", 'PROJWIN':subsetExtent, 'EXPAND':0, 'SRS':"4326", 'EXTRA':'-co "COMPRESS=LZW"', 'SDS':False, 'OUTPUT':out_filename}
-        processing.runalg("gdalogr:translate",param)   
-    
+        processing.runalg("gdalogr:translate",param)
+
     except Exception as e:
         progress.setText(sys.exc_info()[0])
