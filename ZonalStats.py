@@ -93,11 +93,13 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
 ##            V_Ymax = math.ceil(layer.extent().yMaximum())-(R_Yres/2)
             extent = str(V_Xmin)+","+str(V_Xmax)+","+str(V_Ymin)+","+str(V_Ymax)
             OutRName = model_folder + os.sep + model_name + '_Raster.tif'
-            param = {'input':InVName, 'use':0, 'column':sb_column, 'GRASS_REGION_PARAMETER':extent, 'GRASS_REGION_CELLSIZE_PARAMETER':subcatchmap_res, 'output':OutRName}
-            processing.runalg("grass:v.to.rast.attribute",param)
+            #param = {'input':InVName, 'use':0, 'column':sb_column, 'GRASS_REGION_PARAMETER':extent, 'GRASS_REGION_CELLSIZE_PARAMETER':subcatchmap_res, 'GRASS_SNAP_TOLERANCE_PARAMETER':0.01, 'GRASS_MIN_AREA_PARAMETER':0.001, 'output':OutRName}
+            processing.runalg("grass:v.to.rast.attribute",InVName,0,sb_column,extent,subcatchmap_res,0.01,0.001,OutRName)
 
             # Get info from new raster
             dataset = gdal.Open(OutRName, GA_ReadOnly)
+            if dataset is None:
+                raise GeoAlgorithmExecutionException('Cannot open file ' + OutRName)
             sc = dataset.ReadAsArray()
             geotransform = dataset.GetGeoTransform()
             sc_Xres = geotransform[1]
@@ -118,9 +120,11 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
 
             # Create maps for each subcatchment for use in coefficients map method
             # Create array with a unique number for each pixel. Area as rastarized vector map and resolution as raster data map
+            print(sc.shape)
             unique_array = numpy.resize(range(1,int((V_Xmax-V_Xmin)/abs(R_Xres))*int((V_Ymax-V_Ymin)/abs(R_Yres))+1),[int((V_Ymax-V_Ymin)/abs(R_Yres)),int((V_Xmax-V_Xmin)/abs(R_Xres))])
             x_factor = sc.shape[1]/float(unique_array.shape[1]) # x resoution factor between rasterized vector and unique_array
             y_factor = sc.shape[0]/float(unique_array.shape[0]) # y resoution factor between rasterized vector and unique_array
+            print(x_factor,y_factor)
             unique_array_resample = numpy.zeros(sc.shape) # initializing array for resampling
             ones_array = numpy.ones([y_factor,x_factor]) # work array
             # Resampling
