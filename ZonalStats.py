@@ -59,6 +59,8 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
 
         # Get info from raster
         dataset = gdal.Open(file_name, GA_ReadOnly)
+        if dataset is None:
+                raise GeoAlgorithmExecutionException('Cannot open file ' + file_name)
         R_Xsize = dataset.RasterXSize
         R_Ysize = dataset.RasterYSize
         geotransform = dataset.GetGeoTransform()
@@ -120,7 +122,6 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
 
             # Create maps for each subcatchment for use in coefficients map method
             # Create array with a unique number for each pixel. Area as rastarized vector map and resolution as raster data map
-            print(sc.shape)
             unique_array = numpy.resize(range(1,int((V_Xmax-V_Xmin)/abs(R_Xres))*int((V_Ymax-V_Ymin)/abs(R_Yres))+1),[int((V_Ymax-V_Ymin)/abs(R_Yres)),int((V_Xmax-V_Xmin)/abs(R_Xres))])
             x_factor = sc.shape[1]/float(unique_array.shape[1]) # x resoution factor between rasterized vector and unique_array
             y_factor = sc.shape[0]/float(unique_array.shape[0]) # y resoution factor between rasterized vector and unique_array
