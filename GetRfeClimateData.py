@@ -185,10 +185,11 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
 
         subsetExtent = str(xmin)+","+str(xmax)+","+str(ymin)+","+str(ymax)
 
-        # call gdal_translate
+        # call gdal_translateconvertformat
         progress.setText('Processing '+out_filename)
-        param = {'INPUT':in_filename, 'OUTSIZE':100, 'OUTSIZE_PERC':True, 'NO_DATA':"none", 'PROJWIN':subsetExtent, 'EXPAND':0, 'SRS':"4326", 'EXTRA':'-co "COMPRESS=LZW"', 'SDS':False, 'OUTPUT':out_filename}
-        processing.runalg("gdalogr:translate",param)
+        print('Processing '+out_filename)
+        param = {'INPUT':in_filename, 'OUTSIZE':100, 'OUTSIZE_PERC':True, 'NO_DATA':"none", 'EXPAND':0, 'SRS':"EPSG:4326",'PROJWIN':subsetExtent, 'SDS':False, 'EXTRA':'-co "COMPRESS=LZW"', 'OUTPUT':out_filename}
+        processing.runalg('gdalogr:translate',param)
 
     except Exception as e:
         progress.setText(sys.exc_info()[0])

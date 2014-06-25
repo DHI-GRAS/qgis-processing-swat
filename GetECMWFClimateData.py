@@ -144,7 +144,9 @@ def gdal2GeoTiff_ECMWF_WGS84(Filename, progress):
     for i in range(1,number_of_bands+1):
         data = gdal.Open(Filename, GA_ReadOnly)
         band = data.GetRasterBand(i)
-        UTCtime_delta = int(band.GetMetadata()['GRIB_REF_TIME'][0:12])
+        htime = band.GetMetadata()['GRIB_REF_TIME']
+        userange = len(htime)-7
+        UTCtime_delta = int(band.GetMetadata()['GRIB_REF_TIME'][0:userange])
         data = None
         tiff_filename = tiff_filename_base + str((d + timedelta(seconds=UTCtime_delta)).year) + \
                         str((d + timedelta(seconds=UTCtime_delta)).month).zfill(2) + \
