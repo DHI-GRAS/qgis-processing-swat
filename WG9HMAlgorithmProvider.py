@@ -30,6 +30,7 @@ from processing_SWAT.MDWF_Sensan_a import MDWF_Sensan_a
 from processing_SWAT.MDWF_Sensan_b import MDWF_Sensan_b
 from processing_SWAT.MDWF_Sensan_c import MDWF_Sensan_c
 from processing_SWAT.MDWF_Sensan_d import MDWF_Sensan_d
+from processing_SWAT.OSFWF_DailyAssimilation import OSFWF_DailyAssimilation
 
 class WG9HMAlgorithmProvider(AlgorithmProvider):
 
@@ -56,7 +57,8 @@ class WG9HMAlgorithmProvider(AlgorithmProvider):
         # Add preloaded algs here
         self.preloadedAlgs = [OSFWF_GetGfsData(),OSFWF_GetRfeData(),OSFWF_GetECMWFData(),OSFWF_UpdateModelClimateData(),OSFWF_RunSWAT(),
             OSFWF_PlotResults(),MDWF_DevSWAT(),MDWF_GenModelFiles(),MDWF_GenModelClimateData(),MDWF_RunSWAT(),MDWF_PlotResults(),MDWF_Calibrate_a(), MDWF_Calibrate_b(),
-            MDWF_Calibrate_c(),MDWF_Calibrate_d(),MDWF_Sensan_a(),MDWF_Sensan_b(),MDWF_Sensan_c(),MDWF_Sensan_d(),OSFWF_Assimilate_a(),OSFWF_Assimilate_b(),OSFWF_Assimilate_c(),OSFWF_Assimilate_d()]
+            MDWF_Calibrate_c(),MDWF_Calibrate_d(),MDWF_Sensan_a(),MDWF_Sensan_b(),MDWF_Sensan_c(),MDWF_Sensan_d(),OSFWF_Assimilate_a(),OSFWF_Assimilate_b(),OSFWF_Assimilate_c(),OSFWF_Assimilate_d(),
+            OSFWF_DailyAssimilation()]
 
         folder = self.scriptsFolder()
         for descriptionFile in os.listdir(folder):
