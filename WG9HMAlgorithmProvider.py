@@ -39,10 +39,6 @@ class WG9HMAlgorithmProvider(AlgorithmProvider):
         self.activate = False
         self.createAlgsList() #preloading algorithms to speed up
 
-    def scriptsFolder(self):
-        '''The folder where script algorithms are stored'''
-        return os.path.dirname(__file__) + "/scripts"
-
     def initializeSettings(self):
         AlgorithmProvider.initializeSettings(self)
         ProcessingConfig.addSetting(Setting(self.getDescription(),
@@ -60,15 +56,6 @@ class WG9HMAlgorithmProvider(AlgorithmProvider):
             MDWF_Calibrate_c(),MDWF_Calibrate_d(),MDWF_Sensan_a(),MDWF_Sensan_b(),MDWF_Sensan_c(),MDWF_Sensan_d(),OSFWF_Assimilate_a(),OSFWF_Assimilate_b(),OSFWF_Assimilate_c(),OSFWF_Assimilate_d(),
             OSFWF_DailyAssimilation()]
 
-        folder = self.scriptsFolder()
-        for descriptionFile in os.listdir(folder):
-            if descriptionFile.endswith("py"):
-                try:
-                    fullpath = os.path.join(self.scriptsFolder(), descriptionFile)
-                    alg = WG9HMAlgorithm(fullpath)
-                    self.preloadedAlgs.append(alg)
-                except WrongScriptException,e:
-                    ProcessingLog.addToLog(ProcessingLog.LOG_ERROR,e.msg)
 
     def getDescription(self):
         return "Product Group 9 Hydrological Model"
