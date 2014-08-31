@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy
 import datetime
 import os
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+#from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from matplotlib.pylab import *
 from SWAT_output_format_specs import SWAT_output_format_specs
 OUTSPECS = SWAT_output_format_specs()

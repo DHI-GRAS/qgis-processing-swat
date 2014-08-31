@@ -1,7 +1,9 @@
+import matplotlib
+matplotlib.use("Qt4Agg")
 from matplotlib.pylab import *
 import numpy
 import os
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
+#from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 import read_SWAT_out
 from SWAT_output_format_specs import SWAT_output_format_specs
 RES_OUTSPECS = SWAT_output_format_specs()

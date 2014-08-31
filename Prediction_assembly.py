@@ -20,6 +20,7 @@ from read_SWAT_out import read_SWAT_time
 from SWAT_output_format_specs import SWAT_output_format_specs
 from ASS_utilities import ReadObsFlowsAss
 import ASS_Evaluation
+import math
 
 PREDICTION_FOLDER ='r:\\Projects\\TigerNET\\Kavango\\Assimilation\\F_Predictions' #Predictions will be stored here
 SRC_FOLDER = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\TxtInOut' #SWAT output folder
@@ -332,8 +333,8 @@ for jj in range(0,8,1):
     nse_ass = 1 - numpy.power(errorsimobs_ass,2).sum()/numpy.power(varobs,2).sum()
 
     #Coverage
-    test = simobs-2*stdobs
-    test2 = simobs+2*stdobs
+    test = simobs-1.96*stdobs
+    test2 = simobs+1.96*stdobs
     j=0
     for i in range(0,len(obs)-1):
         if test[i]<obs[i] and obs[i]<test2[i]:
@@ -355,11 +356,11 @@ for jj in range(0,8,1):
         covAss_withbase = -999
 
     #Sharpness
-    ll = simobs-2*stdobs
-    ul = simobs+2*stdobs
+    ll = simobs-1.96*stdobs
+    ul = simobs+1.96*stdobs
 
-    llass = simobs_ass-2*stdobs_ass
-    ulass = simobs_ass+2*stdobs_ass
+    llass = simobs_ass-1.96*stdobs_ass
+    ulass = simobs_ass+1.96*stdobs_ass
 
 
     sharpdet = numpy.mean(numpy.ma.masked_array((ul-ll),numpy.isnan(ul-ll)))
@@ -393,6 +394,28 @@ for jj in range(0,8,1):
 
     ISS = nansum(iss)
     ISSass = nansum(issass)
+
+    # Continuous ranked probability score (CRPS) See Gneiting et al, 2005, equation 4
+
+    crps = zeros([len(simobs)])
+    crps_ass = zeros([len(simobs)])
+
+    for i in range(0,len(simobs)):
+        mu = simobs[i]
+        sigma = stdobs[i]
+        mu_ass = simobs_ass[i]
+        sigma_ass = stdobs_ass[i]
+        criterion = (obs[i]-mu)/sigma
+        criterion_ass = (obs[i]-mu_ass)/sigma_ass
+        pdfc = 1.0/(2.0*math.pi)**(.5)*math.exp(-1/2*criterion**2)
+        pdfc_ass = 1.0/(2.0*math.pi)**(.5)*math.exp(-1/2*criterion_ass**2)
+        cdfc = 1.0/2.0*(1+math.erf(criterion/2**(.5)))
+        cdfc_ass = 1.0/2.0*(1+math.erf(criterion_ass/2**(.5)))
+        crps[i] = sigma*(criterion*(2.0*cdfc - 1.0) + 2.0*pdfc - 1.0/math.pi**(.5))
+        crps_ass[i] = sigma_ass*(criterion_ass*(2.0*cdfc_ass - 1.0) + 2.0*pdfc_ass - 1.0/math.pi**(.5))
+
+    CRPS = nanmean(crps)
+    CRPS_ass = nanmean(crps_ass)
 
     indeces = ~numpy.isnan(lastobs)
     obs = obs[indeces]
@@ -434,8 +457,9 @@ for jj in range(0,8,1):
     f.write('Deterministic run       ' + str(ISS)+ '\n')
     f.write('Assimilation run        ' + str(ISSass)+ '\n')
     f.write('Persistence Index' + '\n')
-    f.write('Number of predicted obs' + '\n')
-    f.write(str(nobspi)+ '\n')
     f.write('Deterministic run       ' + str(piindex)+ '\n')
     f.write('Assimilation run        ' + str(piindex_ass)+ '\n')
+    f.write('Continous Ranked Probability Score' + '\n')
+    f.write('Deterministic run       ' + str(CRPS)+ '\n')
+    f.write('Assimilation run        ' + str(CRPS_ass)+ '\n')
     f.close()

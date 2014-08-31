@@ -4,9 +4,9 @@ import numpy
 import os
 import csv
 from datetime import date, timedelta
-from ASS_utilities_ol import ReadObsFlowsAss
-from ASS_utilities_ol import LoadData
-from ASS_utilities_ol import MuskSetupFlows
+from ASS_utilities import ReadObsFlowsAss
+from ASS_utilities import LoadData
+from ASS_utilities import MuskSetupFlows
 from SWAT_output_format_specs import SWAT_output_format_specs
 OUTSPECS = SWAT_output_format_specs()
 

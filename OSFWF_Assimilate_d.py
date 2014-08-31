@@ -49,10 +49,10 @@ class OSFWF_Assimilate_d(GeoAlgorithm):
             SWAT_startdate = date2num(date(int(SWAT_time_info[1]+SWAT_time_info[4]),1,1))
         SWAT_enddate = date2num(date(int(SWAT_time_info[0]+SWAT_time_info[1]-1),1,1)) + SWAT_time_info[3]-1
 
-        # Assimilation startdate is 30 days prior to STARTDATE
-        ASS_startdate = date2num(num2date(datestr2num(STARTDATE))-timedelta(days = 30))
-        # Assimilation enddate is 8 days after STARTDATE
-        ASS_enddate = datestr2num(STARTDATE) + 8
+        # Assimilation startdate is equal to SWAT start date
+        ASS_startdate = SWAT_startdate
+        # Assimilation enddate is equal to SWAT end date
+        ASS_enddate = SWAT_enddate
 
         ASS_module3_Assimilation.kf_flows(OBS_FILE, ASS_FOLDER, NBRCH, ASS_enddate, ASS_startdate, SWAT_enddate, SWAT_startdate)
 

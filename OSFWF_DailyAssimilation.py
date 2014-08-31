@@ -33,24 +33,24 @@ class OSFWF_DailyAssimilation(GeoAlgorithm):
 
     def processAlgorithm(self, progress):
         progress.setConsoleInfo("Downloading new weather data...")
-        SRC_FOLDER = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\TxtInOut' #SWAT output folder
-        ASS_FOLDER = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\F_AssFolder'#storage location for assimilation input
-        OBS_FILE = 'r:\\Projects\\TigerNET\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv' #file with in-situ observations
-        pcp_folder = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\APCP'
-        tmax_folder = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\TMAX'
-        tmin_folder = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\TMIN'
-        forecast_dates_file = "r:\\Projects\\TigerNET\\Kavango\\Assimilation\\Climate_stations\\ForecastDates.txt"
-        logfilename = "r:\\Projects\\TigerNET\\Kavango\\Assimilation\\Climate_stations\\log.txt"
-        climstatfilename = "r:\\Projects\\TigerNET\\Kavango\\Assimilation\\Climate_stations\KavangoStations.txt"
+        SRC_FOLDER = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TxtInOut' #SWAT output folder
+        ASS_FOLDER = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\F_AssFolder'#storage location for assimilation input
+        OBS_FILE = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv' #file with in-situ observations
+        pcp_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\APCP'
+        tmax_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TMAX'
+        tmin_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TMIN'
+        forecast_dates_file = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\\ForecastDates.txt"
+        logfilename = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\\log.txt"
+        climstatfilename = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\KavangoStations.txt"
         subcatchmap_res = 0.01
         correct_factor = 0.67
-        model = ModelFile("r:\\Projects\\TigerNET\\Kavango\\Kavango_Showcase_new\\ModelDescription.txt")
+        model = ModelFile("p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Kavango_Showcase_new\\ModelDescription.txt")
         NBRCH = 12 #number of reaches in the model
         REACH_ID = 10 #reach for which in-situ data is available
         OUTSPECS = SWAT_output_format_specs()
         SWAT_EXE = SRC_FOLDER + os.sep + "swat2009DtuEnv.exe"
         Issue_Date = date.today()
-        Ass_Out_Folder = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\F_Ass_Out_' + str(Issue_Date)
+        Ass_Out_Folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\F_Ass_Out_' + str(Issue_Date)
 
         # Download new NOAA GFS data
         for var in ['APCP','TMAX','TMIN']:
