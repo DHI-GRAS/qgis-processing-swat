@@ -60,8 +60,8 @@ class OSFWF_GetECMWFData(GeoAlgorithm):
         self.addParameter(ParameterFile(OSFWF_GetECMWFData.TMIN_DST_FOLDER, "Select minimum temperature folder", True, False))
         self.addParameter(ParameterString(OSFWF_GetECMWFData.START_DATE, "Start date [yyyymmdd]. After 19790101.", "20120101", False))
         self.addParameter(ParameterString(OSFWF_GetECMWFData.END_DATE, "End date [yyyymmdd]. It is recomended that no more than 6 months of data is downloaded at a time.", "20120601", False))
-        self.addParameter(ParameterString(OSFWF_GetECMWFData.EMAIL, "Email", "pbau@env.dtu.dk", False))
-        self.addParameter(ParameterString(OSFWF_GetECMWFData.TOKEN, "Token", "c1f19168ccbfe27be455dd20acaa9a42", False))
+        self.addParameter(ParameterString(OSFWF_GetECMWFData.EMAIL, "Email", "", False))
+        self.addParameter(ParameterString(OSFWF_GetECMWFData.TOKEN, "Token", "", False))
         param = ParameterNumber(OSFWF_GetECMWFData.LEFT_LONG, "Left longitude", -180, 180, -20)
         param.isAdvanced = True
         self.addParameter(param)
