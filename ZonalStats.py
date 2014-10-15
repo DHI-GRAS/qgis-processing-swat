@@ -153,7 +153,6 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
             unique_array = numpy.resize(range(1,int((V_Xmax-V_Xmin)/abs(R_Xres))*int((V_Ymax-V_Ymin)/abs(R_Yres))+1),[int((V_Ymax-V_Ymin)/abs(R_Yres)),int((V_Xmax-V_Xmin)/abs(R_Xres))])
             x_factor = sc.shape[1]/float(unique_array.shape[1]) # x resoution factor between rasterized vector and unique_array
             y_factor = sc.shape[0]/float(unique_array.shape[0]) # y resoution factor between rasterized vector and unique_array
-            print(x_factor,y_factor)
             unique_array_resample = numpy.zeros(sc.shape) # initializing array for resampling
             ones_array = numpy.ones([y_factor,x_factor]) # work array
             # Resampling
