@@ -96,8 +96,12 @@ def GfsForecastImport(StartDate, GfsVar, level, TargetDirectory, LeftLon, RightL
     # Move files and clean up
     for f in Daily_FileList:
         shutil.copy(f, TargetDirectory + os.sep + os.path.split(f)[1])
-        os.remove(f)
-    shutil.rmtree(DownloadDirectory) # Remove Temp dir
+    try:
+        for f in Daily_FileList:
+            os.remove(f)
+        shutil.rmtree(DownloadDirectory) # Remove Temp dir
+    except:
+        pass
 
     return ForecastDate
 

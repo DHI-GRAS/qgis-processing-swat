@@ -104,10 +104,18 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
                 # Move files and clean up
                 for f in Max_Daily_FileList:
                     shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
-                    os.remove(f)
+                for f in Max_Daily_FileList:
+                    try:    
+                        os.remove(f)
+                    except:
+                        pass
                 for f in Min_Daily_FileList:
                     shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                    os.remove(f)
+                for f in Min_Daily_FileList:    
+                    try:
+                        os.remove(f)
+                    except:
+                        pass
 
         else:
             for m in range(1,12+1):
@@ -127,12 +135,23 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
                 # Move files and clean up
                 for f in Max_Daily_FileList:
                     shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
-                    os.remove(f)
+                for f in Max_Daily_FileList:
+                    try:    
+                        os.remove(f)
+                    except:
+                        pass
                 for f in Min_Daily_FileList:
                     shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                    os.remove(f)
+                for f in Min_Daily_FileList:    
+                    try:
+                        os.remove(f)
+                    except:
+                        pass
 
-        shutil.rmtree(DownloadDirectory) # Remove Temp dir
+        try:
+            shutil.rmtree(DownloadDirectory) # Remove Temp dir
+        except:
+            pass
 
 
     server = None
