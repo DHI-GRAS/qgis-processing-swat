@@ -77,7 +77,10 @@ def RfeImportYear(year, TargetDirectory, log_file, progress, iteration, number_o
 
     # Translate to GeoTIFF
     iteration = Rfe2GeoTIFF_WGS84(BIL_filelist, TargetDirectory, log_file, progress, iteration, number_of_iterations, subset_extent)
-    shutil.rmtree(DownloadDirectory) # Remove Temp dir
+    try:
+        shutil.rmtree(DownloadDirectory) # Remove Temp dir
+    except:
+        pass
     return iteration
 
 def RfeImportDays(startdate, enddate, TargetDirectory, log_file, progress, iteration, number_of_iterations, subset_extent):
@@ -121,9 +124,9 @@ def RfeImportDays(startdate, enddate, TargetDirectory, log_file, progress, itera
                 BIL_filelist.append(dst_file.split('.tar.gz')[0] + '.bil')
             except tarfile.ReadError:
                 try:
-                  tar.close()
+                    tar.close()
                 except:
-                  None
+                    None
                 os.remove(dst_file)
 
     progress.setPercentage(iteration/number_of_iterations*100)
@@ -131,9 +134,9 @@ def RfeImportDays(startdate, enddate, TargetDirectory, log_file, progress, itera
     # Translate to GeoTIFF
     iteration = Rfe2GeoTIFF_WGS84(BIL_filelist, TargetDirectory, log_file, progress, iteration, number_of_iterations, subset_extent)
     try:
-      shutil.rmtree(DownloadDirectory) # Remove Temp dir
+        shutil.rmtree(DownloadDirectory) # Remove Temp dir
     except:
-      None
+        pass
     return iteration
 
 def Rfe2GeoTIFF_WGS84(BIL_filelist, dst_folder, log_file, progress, iteration, number_of_iterations, subset_extent):
