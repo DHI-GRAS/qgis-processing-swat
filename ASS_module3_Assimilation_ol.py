@@ -38,7 +38,7 @@ from ASS_utilities import MuskSetupFlows
 from SWAT_output_format_specs import SWAT_output_format_specs
 OUTSPECS = SWAT_output_format_specs()
 
-def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startdate, Issue_date, RR_enddate, RR_startdate):
+def kf_flows(Q_obs, Ass_folder, nbrch, Enddate, Startdate, Issue_date, RR_enddate, RR_startdate):
     """Returns deterministic and assimilated discharges"""
 #-------------------------------------------------------------------------------
 
@@ -61,7 +61,6 @@ def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startd
 
     #Getting input data and parameters
     (X,K,drainsTo,alphaerr,q,RR,nbrch_add, timestep,loss) = LoadData(Ass_folder, nbrch, RR_enddate, RR_startdate)
-#    print(timestep)
     # Adjusting error model parameters for sub-daily time steps. Quick and dirty
 #    if timestep<1:
  #       alphaerr = numpy.power(alphaerr,timestep)
@@ -182,7 +181,9 @@ def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startd
         for j in range(nbrch_add,2*nbrch_add):
             G1[i,j]= Gb[i,j-nbrch_add]
 
-    Q2 = dot(RHO,(q**2))
+    Q2 = dot(RHO,(q**2)) # Use this line if spatial runoff error correlation should be included
+ #   Q2 = q**2 # Use this if runoff error is assumed to be spatially uncorrelated
+
     Q = numpy.zeros([3*nbrch_add,3*nbrch_add])
 
     for t in range(nbrch_add,2*nbrch_add):
@@ -249,11 +250,8 @@ def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startd
         x3[:,i] = dot(F1,xtemp)+dot(G1,concatenate((Inputs[i-1,:].T,Inputs[i,:].T), axis=0))
         P = dot(dot(F1,P),F1.T) + Q
 
-        if os.path.isfile(obs_file):
-            a = numpy.where(Q_obs[:,0]==modeltime[i])        #look for measurement on day i
-            a = a[0].T
-        else:
-            a = numpy.array([])
+        a = numpy.where(Q_obs[:,0]==modeltime[i])        #look for measurement on day i
+        a = a[0].T
 
         if a.size > 0:
             for mn in range(0,len(a)):
@@ -323,25 +321,25 @@ def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startd
         P3[:,i] = q_temp/(1/timestep)
 
     #Creating output files for plotting function
-    with open(Ass_out_folder + os.sep + 'Deterministic_Output.csv', 'wb') as csvfile:
+    with open(Ass_folder + os.sep + 'Deterministic_Output.csv', 'wb') as csvfile:
         file_writer = csv.writer(csvfile, delimiter=',')
         for i in range(0,len(q2)):
             file_writer.writerow(q2[i])
     csvfile.close
 
-    with open(Ass_out_folder + os.sep + 'Deterministic_Cov.csv', 'wb') as csvfile:
+    with open(Ass_folder + os.sep + 'Deterministic_Cov.csv', 'wb') as csvfile:
         file_writer = csv.writer(csvfile, delimiter=',')
         for i in range(0,len(P2)):
             file_writer.writerow(P2[i])
     csvfile.close
 
-    with open(Ass_out_folder + os.sep + 'Assimilation_Output.csv', 'wb') as csvfile:
+    with open(Ass_folder + os.sep + 'Assimilation_Output.csv', 'wb') as csvfile:
         file_writer = csv.writer(csvfile, delimiter=',')
         for i in range(0,len(q3)):
             file_writer.writerow((q3[i]))
     csvfile.close
 
-    with open(Ass_out_folder + os.sep + 'Assimilation_Cov.csv', 'wb') as csvfile:
+    with open(Ass_folder + os.sep + 'Assimilation_Cov.csv', 'wb') as csvfile:
         file_writer = csv.writer(csvfile, delimiter=',')
         for i in range(0,len(P3)):
             file_writer.writerow(P3[i])
@@ -365,7 +363,7 @@ def kf_flows(obs_file, Q_obs, Ass_folder, Ass_out_folder, nbrch, Enddate, Startd
 
     output[:,0] = simdates
 
-    with open(Ass_out_folder + os.sep + 'Assimilation_Final_Output.csv', 'wb') as csvfile:
+    with open(Ass_folder + os.sep + 'Assimilation_Final_Output.csv', 'wb') as csvfile:
         file_writer = csv.writer(csvfile,delimiter=',')
         file_writer.writerow(out_header)
         for i in range(0,len(output)):

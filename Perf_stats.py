@@ -45,115 +45,19 @@ from PyQt4 import QtGui
 from read_SWAT_out import read_SWAT_time
 from SWAT_output_format_specs import SWAT_output_format_specs
 from ASS_utilities import ReadObsFlowsAss
-import ASS_Evaluation
 
-PREDICTION_FOLDER ='r:\\Projects\\TigerNET\\Kavango\\Assimilation\\F_Predictions_modified' #Predictions will be stored here
-SRC_FOLDER = 'r:\\Projects\\TigerNET\\Kavango\\Assimilation\\TxtInOut' #SWAT output folder
-OBS_FILE = 'r:\\Projects\\TigerNET\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv' #file with in-situ observations
-OBS_FILE_ASS = 'r:\\Projects\\TigerNET\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv'
-NBRCH = 12 #number of reaches in the model
-REACH_ID = 10 #reach for which in-situ data is available
+
+PREDICTION_FOLDER ='p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Test_Predictions' #Predictions will be stored here
+OBS_FILE = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv' #file with in-situ observations
 
 OUTSPECS = SWAT_output_format_specs()
 
-#Get startdate from SWAT file.cio and compare with startdate of assimilation to determine header in SWAT output files
-SWAT_time_info = read_SWAT_time(SRC_FOLDER)
-SWAT_startdate = date2num(date(int(SWAT_time_info[1]),1,1) + timedelta(days=int(SWAT_time_info[2])-1))
-if SWAT_time_info[4] > 0: # Account for NYSKIP>0
-    SWAT_startdate = date2num(date(int(SWAT_time_info[1]+SWAT_time_info[4]),1,1))
-SWAT_enddate = date2num(date(int(SWAT_time_info[0]+SWAT_time_info[1]-1),1,1)) + SWAT_time_info[3]-1
-
-ASS_startdate = SWAT_startdate
-ASS_enddate = SWAT_enddate
-arraylen = 5000
-count = 0
-day_0_det = numpy.zeros([arraylen,3])
-day_1_det = numpy.zeros([arraylen,3])
-day_2_det = numpy.zeros([arraylen,3])
-day_3_det = numpy.zeros([arraylen,3])
-day_4_det = numpy.zeros([arraylen,3])
-day_5_det = numpy.zeros([arraylen,3])
-day_6_det = numpy.zeros([arraylen,3])
-day_7_det = numpy.zeros([arraylen,3])
-
-day_0_ass = numpy.zeros([arraylen,3])
-day_1_ass = numpy.zeros([arraylen,3])
-day_2_ass = numpy.zeros([arraylen,3])
-day_3_ass = numpy.zeros([arraylen,3])
-day_4_ass = numpy.zeros([arraylen,3])
-day_5_ass = numpy.zeros([arraylen,3])
-day_6_ass = numpy.zeros([arraylen,3])
-day_7_ass = numpy.zeros([arraylen,3])
-
-dates = range(int(ASS_startdate), int(ASS_enddate)+1,1)
-dates = numpy.array(dates)
-dates.reshape(len(dates),1)
-
-today = date.today()
-period = today-date(2012,01,01) + timedelta(1)
-enddays = period.days
-
-# Loop through each day of validation period
-# In 2012 observations are available between 01-Jan and 30-Sep (Range 0..274)
-
-#--------------------------Plotting----------------------------------------
-for jj in range(0,8,1):
-    #Getting the observed data and identify reach(es)
-    if os.path.isfile(OBS_FILE):
-        Q_obs = ReadObsFlowsAss(OBS_FILE)
-        Q_obs[:,0] = Q_obs[:,0] + OUTSPECS.PYEX_DATE_OFFSET
-        reachID = []
-        reachID.append(Q_obs[0,3])
-        for i in range(1,len(Q_obs)):
-            if Q_obs[i,3] != reachID[-1]:
-                reachID.append(Q_obs[i,3])
-    else:
-        reachID = [rch_ID]
-
-    for n in range(0,len(reachID)):
-
-        #Routed simulation data
-        data = genfromtxt(PREDICTION_FOLDER + os.sep + 'day_' + str(jj) + '_ass.csv', delimiter=',')
-        q_ass = data[:,1]
-        std_ass = data[:,2]
-        dates = data[:,0]
-
-        #Creating the bounds
-        up_bound_ass = q_ass+2*std_ass
-        low_bound_ass = numpy.zeros([len(q_ass)])
-        for j in range (0,len(q_ass)):
-            if q_ass[j]-2*std_ass[j]>0:
-                low_bound_ass[j] = q_ass[j]-2*std_ass[j]
-            else:
-                low_bound_ass[j] = 0
-
-        # Create plot
-
-        fig = plt.figure()
-        plt.title('Assimilation results for reach  '+str(int(reachID[n])), fontsize=12)
-        plt.ylabel('Discharge [$m^3/s$]')
-        p1, = plt.plot_date(dates, q_ass, linestyle='-',color='green', marker = 'None')
-        plt.plot_date(dates, low_bound_ass, linestyle='--', color = 'green',marker = 'None')
-        plt.plot_date(dates, up_bound_ass, linestyle='--', color = 'green',marker = 'None')
-        if os.path.isfile(OBS_FILE):
-            # Extract obsdata for current reachID
-            obsdata = Q_obs[find(Q_obs[:,3]==int(reachID[n])),:]
-            obstimes = obsdata[:,0]
-            obs_dates = obstimes
-            p2, = plt.plot_date(obs_dates, obsdata[:,1], color='red', marker = '.')
-            plt.legend([p1,p2],['Assimilated Run','Observed'])
-        plt.legend(loc=0)
-        ax1 = fig.add_subplot(111)
-        ax1.fill_between(dates, low_bound_ass, up_bound_ass, color='green',alpha=.3)
-        plt.ylim([0,max(up_bound_ass[~numpy.isnan(up_bound_ass)])+5])
-        plt.xlim([min(dates),max(dates)])
-        figname = PREDICTION_FOLDER + os.sep + 'day_' + str(jj) + '_ass.pdf'
-        plt.savefig(figname)
-#        plt.show()
-
 #-------------------------Performance statistics------------------------------------
+#Load observed data
+if os.path.isfile(OBS_FILE):
+    Q_obs = ReadObsFlowsAss(OBS_FILE)
+    Q_obs[:,0] = Q_obs[:,0] + OUTSPECS.PYEX_DATE_OFFSET
 for jj in range(0,8,1):
-    #Load observed data
     obstimes = Q_obs[:,0]
     obstimes = obstimes[~numpy.isnan(Q_obs[:,1])]
     obs = Q_obs[~numpy.isnan(Q_obs[:,1]),1]
@@ -221,10 +125,14 @@ for jj in range(0,8,1):
     meanobs = obs.mean()
     errorsimobs = simobs-obs
     errorsimobs_ass = simobs_ass-obs
+    errorsimobsabs = numpy.absolute(errorsimobs)
+    errorsimobsabs_ass = numpy.absolute(errorsimobs_ass)
     meanerror = errorsimobs.mean()
     meanerror_ass = errorsimobs_ass.mean()
     meanerrorpercent = meanerror/meanobs* 100
     meanerrorpercent_ass = meanerror_ass/meanobs* 100
+    maerror = errorsimobsabs.mean()
+    maerror_ass = errorsimobsabs_ass.mean()
     varobs = obs - meanobs
     rmse = numpy.sqrt(numpy.power(errorsimobs,2).mean())
     rmsepercent = rmse/meanobs*100
@@ -237,14 +145,14 @@ for jj in range(0,8,1):
     test = simobs-1.96*stdobs
     test2 = simobs+1.96*stdobs
     j=0
-    for i in range(0,len(obs)-1):
+    for i in range(0,len(obs)):
         if test[i]<obs[i] and obs[i]<test2[i]:
             j = j+1
 
     test3 = simobs_ass-2*stdobs_ass
     test4 = simobs_ass+2*stdobs_ass
     j1 = 0
-    for i in range(0,len(obs)-1):
+    for i in range(0,len(obs)):
         if test3[i]<obs[i] and obs[i]<test4[i]:
             j1 = j1+1
 
@@ -328,6 +236,8 @@ for jj in range(0,8,1):
     stdobs = stdobs[indeces]
     stdobs_ass = stdobs_ass[indeces]
     varobs = obs - lastobs
+    varobsabs = numpy.absolute(varobs)
+    maepersistence = varobsabs.mean()
     errorsimobs = simobs-obs
     errorsimobs_ass = simobs_ass-obs
     nobspi = len(obs)
@@ -349,6 +259,9 @@ for jj in range(0,8,1):
     f.write('ME (m3/s)' + '\n')
     f.write('Deterministic run       ' + str(meanerror)+ '\n')
     f.write('Assimilation run        ' + str(meanerror_ass)+ '\n')
+    f.write('MAE (m3/s)' + '\n')
+    f.write('Deterministic run       ' + str(maerror)+ '\n')
+    f.write('Assimilation run        ' + str(maerror_ass)+ '\n')
     f.write('Nash-Sutcliffe Efficiency' + '\n')
     f.write('Deterministic run       ' + str(nse)+ '\n')
     f.write('Assimilation run        ' + str(nse_ass)+ '\n')
@@ -361,7 +274,9 @@ for jj in range(0,8,1):
     f.write('Persistence Index' + '\n')
     f.write('Deterministic run       ' + str(piindex)+ '\n')
     f.write('Assimilation run        ' + str(piindex_ass)+ '\n')
-    f.write('Continous Ranked Probability Score' + '\n')
+    f.write('MAE Persistence (m3/s)' + '\n')
+    f.write('MAE of persistence       ' + str(maepersistence)+ '\n')
+    f.write('Continous Ranked Probability Score (m3/s)' + '\n')
     f.write('Deterministic run       ' + str(CRPS)+ '\n')
     f.write('Assimilation run        ' + str(CRPS_ass)+ '\n')
     f.close()

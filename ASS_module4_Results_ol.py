@@ -68,7 +68,7 @@ def Results(obs_file, IssueDate, Startdate, Enddate, Ass_folder, rch_ID):
                 low_bound_ass[j] = 0
 
         timestep = (Enddate-Startdate+1)/len(q_ass)
-        print(timestep)
+        #print(timestep)
 
         # Create plot
         dates = numpy.arange(Startdate, Startdate + len(q_ass)/(1/timestep),timestep)
