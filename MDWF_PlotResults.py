@@ -28,13 +28,9 @@
 
 import os
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterSelection import ParameterSelection
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from datetime import date, timedelta, datetime
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -44,7 +40,7 @@ from SWAT_output_format_specs import SWAT_output_format_specs
 
 RES_OUTSPECS = SWAT_output_format_specs()
 
-class MDWF_PlotResults(GeoAlgorithm):
+class MDWF_PlotResults(SWATAlgorithm):
 
     RES_FOLDER = "RES_FOLDER"
     RES_TYPE = "RES_TYPE"
@@ -54,6 +50,9 @@ class MDWF_PlotResults(GeoAlgorithm):
     HRU_ID = "HRU_ID"
     RES_OBSFILE = "RES_OBSFILE"
     TEMP_RES = "TEMP_RES"
+
+    def __init__(self):
+        super(MDWF_PlotResults, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "6 - Plot Results (MDWF)"
@@ -126,15 +125,4 @@ class MDWF_PlotResults(GeoAlgorithm):
         else:
             raise GeoAlgorithmExecutionException('Result type not supported at the moment')
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")
 

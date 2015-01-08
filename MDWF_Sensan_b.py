@@ -28,20 +28,22 @@
 
 import os
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from SWAT_SENSAN_specs import SWAT_SENSAN_specs
 from ModelFile import ModelFile
 from ParVarFile import ParVarFile
 
-class MDWF_Sensan_b(GeoAlgorithm):
+class MDWF_Sensan_b(SWATAlgorithm):
 
     MODEL_FILE = "MODEL_FILE"
     SRC_FOLDER = "SRC_FOLDER"
     PARVAR = "PARVAR"
     SWAT_EXE = "SWAT_EXE"
+
+    def __init__(self):
+        super(MDWF_Sensan_b, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "5.4 - Sensitivity analysis and calibration of SWAT model with PEST (MDWF) - generate SENSAN control file"
@@ -113,15 +115,3 @@ class MDWF_Sensan_b(GeoAlgorithm):
         ctlfile.writelines(TPLBLOCK)
         ctlfile.writelines(INSBLOCK)
         ctlfile.close()
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

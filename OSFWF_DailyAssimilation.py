@@ -48,13 +48,17 @@ from ModelFile import ModelFile
 from ClimateStationsSWAT import ClimateStationsSWAT
 from ZonalStats import ZonalStats
 from datetime import date, timedelta, datetime
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 
 
-class OSFWF_DailyAssimilation(GeoAlgorithm):
+class OSFWF_DailyAssimilation(SWATAlgorithm):
 
+
+    def __init__(self):
+        super(OSFWF_DailyAssimilation, self).__init__(__file__)
+        
     def defineCharacteristics(self):
         self.name = "Daily Assimilation (OSFWF)"
         self.group = "Operational simulation and forecasting workflow (OSFWF)"
@@ -410,15 +414,3 @@ class OSFWF_DailyAssimilation(GeoAlgorithm):
         ASS_module4_Results.Results(OBS_FILE, str(Issue_Date), ASS_startdate, ASS_enddate, Ass_Out_Folder, REACH_ID)
         # Compute performance statistics
         ASS_Evaluation.Results(ASS_startdate,ASS_enddate, Ass_Out_Folder, NBRCH, REACH_ID, OBS_FILE)
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

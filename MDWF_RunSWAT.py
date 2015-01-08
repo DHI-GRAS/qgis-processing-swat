@@ -31,22 +31,22 @@ from datetime import date, timedelta, datetime
 import numpy
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterSelection import ParameterSelection
-from processing.parameters.ParameterString import ParameterString
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from ClimateStationsSWAT import ClimateStationsSWAT
 from ModelFile import ModelFile
 
-class MDWF_RunSWAT(GeoAlgorithm):
+class MDWF_RunSWAT(SWATAlgorithm):
 
     MODEL_FILE = "MODEL_FILE"
     IO_FOLDER = "IO_FOLDER"
     SWAT_EXE = "SWAT_EXE"
     UPDATE_YN = "UPDATE_YN"
     MODEL_NEWENDDATE ="MODEL_NEWENDDATE"
+
+    def __init__(self):
+        super(MDWF_RunSWAT, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "4 - Run SWAT model (MDWF)"
@@ -102,16 +102,3 @@ class MDWF_RunSWAT(GeoAlgorithm):
         os.chdir(currpath)
         if runres != 0:
             raise GeoAlgorithmExecutionException('SWAT run unsuccessful')
-
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

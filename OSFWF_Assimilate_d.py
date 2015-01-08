@@ -31,25 +31,26 @@ from datetime import date, timedelta
 from matplotlib.pylab import *
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterString import ParameterString
 from read_SWAT_out import read_SWAT_time
 from SWAT_output_format_specs import SWAT_output_format_specs
 from ASS_utilities import ReadNoSubs
 import ASS_module3_Assimilation
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 
 OUTSPECS = SWAT_output_format_specs()
 
-class OSFWF_Assimilate_d(GeoAlgorithm):
+class OSFWF_Assimilate_d(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     MOD_DESC = "MOD_DESC"
     ASS_FOLDER = "ASS_FOLDER"
     STARTDATE = "STARTDATE"
     OBS_FILE = "OBS_FILE"
+
+    def __init__(self):
+        super(OSFWF_Assimilate_d, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "4.4 - Assimilate observations (OSFWF) - run assimilation"
@@ -84,14 +85,3 @@ class OSFWF_Assimilate_d(GeoAlgorithm):
 
         ASS_module3_Assimilation.kf_flows(OBS_FILE, ASS_FOLDER, NBRCH, ASS_enddate, ASS_startdate, SWAT_enddate, SWAT_startdate)
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

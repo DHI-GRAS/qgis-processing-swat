@@ -31,12 +31,9 @@ from datetime import date, timedelta
 from matplotlib.pylab import *
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterNumber import ParameterNumber
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from read_SWAT_out import read_SWAT_time
 from SWAT_output_format_specs import SWAT_output_format_specs
 from ASS_utilities import ReadNoSubs
@@ -44,11 +41,14 @@ import ASS_module1_PrepData
 
 OUTSPECS = SWAT_output_format_specs()
 
-class OSFWF_Assimilate_a(GeoAlgorithm):
+class OSFWF_Assimilate_a(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     MOD_DESC = "MOD_DESC"
     ASS_FOLDER = "ASS_FOLDER"
+    
+    def __init__(self):
+        super(OSFWF_Assimilate_a, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "4.1 - Assimilate observations (OSFWF) - prepare input data"
@@ -75,14 +75,3 @@ class OSFWF_Assimilate_a(GeoAlgorithm):
 
         ASS_module1_PrepData.CreateTextFiles(NBRCH, SRC_FOLDER, ASS_FOLDER, header, SWAT_startdate, SWAT_enddate)
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

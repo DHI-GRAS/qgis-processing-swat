@@ -31,17 +31,13 @@ from datetime import date, timedelta, datetime
 import numpy
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterSelection import ParameterSelection
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import SWAT_PEST_utilities
 from ASS_utilities import ReadNoSubs
 
-class MDWF_Calibrate_b(GeoAlgorithm):
+class MDWF_Calibrate_b(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     MOD_DESC = "MOD_DESC"
@@ -49,6 +45,9 @@ class MDWF_Calibrate_b(GeoAlgorithm):
     OBS_GROUP = "OBS_GROUP"
 ##    SUB_ID = "SUB_ID"
     TEMP_RES = "TEMP_RES"
+
+    def __init__(self):
+        super(MDWF_Calibrate_b, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "5.2 - Sensitivity analysis and calibration of SWAT model with PEST (MDWF) - generate instruction files"
@@ -74,14 +73,3 @@ class MDWF_Calibrate_b(GeoAlgorithm):
 ##        insname, obsblockname = SWAT_PEST_utilities.create_PEST_instruction(SRC_FOLDER, OBS_FILE, OBS_GROUP, SUB_ID, N_SUBS,TEMP_RES)
         insname, obsblockname = SWAT_PEST_utilities.create_PEST_instruction(SRC_FOLDER, OBS_FILE, OBS_GROUP, N_SUBS,TEMP_RES)
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

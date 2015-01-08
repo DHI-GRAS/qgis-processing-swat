@@ -30,18 +30,12 @@ import os
 import shutil
 from datetime import date, timedelta, datetime
 import math
-from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.ProcessingLog import ProcessingLog
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.core.WrongHelpFileException import WrongHelpFileException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterExtent import ParameterExtent
-
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import GetRfeClimateData
 
-class OSFWF_GetRfeData(GeoAlgorithm):
+class OSFWF_GetRfeData(SWATAlgorithm):
 
     TYPE = "TYPE"
     PCP_DST_FOLDER = "PCP_DST_FOLDER"
@@ -49,6 +43,9 @@ class OSFWF_GetRfeData(GeoAlgorithm):
     END_DATE = "END_DATE"
     SUBSET_EXTENT = "EXTENT"
 
+    def __init__(self):
+        super(OSFWF_GetRfeData, self).__init__(__file__)
+    
     def defineCharacteristics(self):
         self.name = "1.2 - Get FEWS-RFE data (OSFWF)"
         self.group = "Operational simulation and forecasting workflow (OSFWF)"
@@ -107,15 +104,3 @@ class OSFWF_GetRfeData(GeoAlgorithm):
         else:
             raise GeoAlgorithmExecutionException('No such directory: \"' + dst_folder + '\" ')
 
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

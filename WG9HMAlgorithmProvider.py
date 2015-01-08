@@ -29,7 +29,6 @@
 import os
 from PyQt4.QtGui import *
 from processing.core.AlgorithmProvider import AlgorithmProvider
-from processing_SWAT.WG9HMAlgorithm import WG9HMAlgorithm
 from processing_SWAT.WG9HMUtils import WG9HMUtils
 from processing.script.WrongScriptException import WrongScriptException
 from processing.core.ProcessingConfig import ProcessingConfig, Setting

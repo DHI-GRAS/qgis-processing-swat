@@ -31,13 +31,9 @@ from datetime import date, timedelta, datetime
 import numpy
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterSelection import ParameterSelection
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from ModelFile import ModelFile
 from processing.tools import dataobjects
 from processing.algs.grass.GrassUtils import GrassUtils
@@ -45,7 +41,7 @@ import gdal
 from gdalconst import *
 import processing
 
-class MDWF_GenModelFiles(GeoAlgorithm):
+class MDWF_GenModelFiles(SWATAlgorithm):
 
     MODEL_FILEPATH = "MODEL_FILEPATH"
     MODEL_FILE = "MODEL_FILE"
@@ -62,6 +58,8 @@ class MDWF_GenModelFiles(GeoAlgorithm):
     MODEL_LONCOLUMN ="MODEL_LONCOLUMN"
     MODEL_ELEVCOLUMN ="MODEL_ELEVCOLUMN"
 
+    def __init__(self):
+        super(MDWF_GenModelFiles, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "2 - Generate Model Description and climate files (MDWF)"
@@ -195,14 +193,3 @@ class MDWF_GenModelFiles(GeoAlgorithm):
         modelfile.writelines('TotalNoSubs ' + str(len(Subbasins)) + '\r\n')
         modelfile.close()
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

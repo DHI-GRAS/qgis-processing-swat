@@ -32,17 +32,17 @@ import numpy
 import subprocess
 from processing_SWAT.WG9HMUtils import WG9HMUtils
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-##from processing.parameters.ParameterNumber import ParameterNumber
-##from processing.parameters.ParameterString import ParameterString
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 
 ##from ModelFile import ModelFile
 ##from ClimateStationsSWAT import ClimateStationsSWAT
 
-class MDWF_DevSWAT(GeoAlgorithm):
+class MDWF_DevSWAT(SWATAlgorithm):
+    
+    def __init__(self):
+        super(MDWF_DevSWAT, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "1 - Develop SWAT model (MDWF)"
@@ -56,14 +56,3 @@ class MDWF_DevSWAT(GeoAlgorithm):
         MapWindow_path = os.path.join(WG9HMUtils.mapwindowPath(),'MapWindow.exe')
         subprocess.Popen([MapWindow_path])
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

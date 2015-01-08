@@ -31,16 +31,12 @@ import shutil
 from datetime import date, timedelta, datetime
 import math
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterString import ParameterString
-
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import GetECMWFClimateData
 
-class OSFWF_GetECMWFData(GeoAlgorithm):
+class OSFWF_GetECMWFData(SWATAlgorithm):
 
     TMAX_DST_FOLDER = "TMAX_DST_FOLDER"
     TMIN_DST_FOLDER = "TMIN_DST_FOLDER"
@@ -52,6 +48,9 @@ class OSFWF_GetECMWFData(GeoAlgorithm):
     RIGHT_LONG = "RIGHT_LONG"
     TOP_LAT = "TOP_LAT"
     BOTTOM_LAT = "BOTTOM_LAT"
+
+    def __init__(self):
+        super(OSFWF_GetECMWFData, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "1.3 - Get ECMWF data (OSFWF)"
@@ -114,14 +113,3 @@ class OSFWF_GetECMWFData(GeoAlgorithm):
         else:
             raise GeoAlgorithmExecutionException('No such directory: \"' + dst_folder + '\" ')
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

@@ -31,19 +31,15 @@ from datetime import date, timedelta, datetime
 import numpy
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterSelection import ParameterSelection
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import SWAT_PEST_utilities
 from SWAT_parameter_specs import SWAT_parameter_specs
 
 PARSPECS = SWAT_parameter_specs()
 
-class MDWF_Calibrate_a(GeoAlgorithm):
+class MDWF_Calibrate_a(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     CAL_PAR = "CAL_PAR"
@@ -54,6 +50,8 @@ class MDWF_Calibrate_a(GeoAlgorithm):
     PARLBND = "PARLBND"
     PARUBND = "PARUBND"
 
+    def __init__(self):
+        super(MDWF_Calibrate_a, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "5.1 - Sensitivity analysis and calibration of SWAT model with PEST (MDWF) - generate template files"
@@ -81,14 +79,3 @@ class MDWF_Calibrate_a(GeoAlgorithm):
 
         TEMPLATE_filename, SWAT_filename = SWAT_PEST_utilities.create_PEST_template(SRC_FOLDER, CAL_PAR, PAR_NAME, SUB_ID, HRU_ID, PARVAL1, PARLBND, PARUBND)
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

@@ -30,21 +30,21 @@ import os
 import csv
 import numpy
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-from processing.parameters.ParameterBoolean  import ParameterBoolean
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from ASS_utilities import ReadNoSubs
 
-class OSFWF_Assimilate_c(GeoAlgorithm):
+class OSFWF_Assimilate_c(SWATAlgorithm):
 
     BOOLEAN = "BOOLEAN"
     MOD_DESC = "MOD_DESC"
     ASS_FOLDER = "ASS_FOLDER"
     ERR_MOD_FILE = "ERR_MOD_FILE"
     NBRCH = "NBRCH"
+
+    def __init__(self):
+        super(OSFWF_Assimilate_c, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "4.3 - Assimilate observations (OSFWF) - update assimilation file"
@@ -85,14 +85,3 @@ class OSFWF_Assimilate_c(GeoAlgorithm):
             else:
                 raise GeoAlgorithmExecutionException('Assimilationfile.txt, Assimilationfile_q.txt or '+ ERR_MOD_FILE +' not found in assimilation folder '+ ASS_FOLDER +'.')
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

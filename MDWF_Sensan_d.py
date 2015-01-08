@@ -28,22 +28,23 @@
 
 import os
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterSelection import ParameterSelection
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import matplotlib
 matplotlib.use('Qt4Agg')
 from SWAT_SENSAN_specs import SWAT_SENSAN_specs
 SENSAN_specs = SWAT_SENSAN_specs()
 import SENSAN_utilities
 
-class MDWF_Sensan_d(GeoAlgorithm):
+class MDWF_Sensan_d(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     SNS_FILE = "SNS_FILE"
 ##    RES_TYPE = "RES_TYPE"
+
+    def __init__(self):
+        super(MDWF_Sensan_d, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "5.6 - Sensitivity analysis and calibration of SWAT model with PEST (MDWF) - SENSAN results"
@@ -62,15 +63,3 @@ class MDWF_Sensan_d(GeoAlgorithm):
             SENSAN_utilities.CSS_SENSAN(SRC_FOLDER, SNS_INFO)
         else:
             raise GeoAlgorithmExecutionException('SENSAN output file ' + SENSAN_specs.RELFLE + ' not found in source directory')
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

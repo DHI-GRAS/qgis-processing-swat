@@ -31,18 +31,20 @@ from datetime import date, timedelta, datetime
 import numpy
 import subprocess
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
 from ClimateStationsSWAT import ClimateStationsSWAT
 from ModelFile import ModelFile
 
-class OSFWF_RunSWAT(GeoAlgorithm):
+class OSFWF_RunSWAT(SWATAlgorithm):
 
     MODEL_FILE = "MODEL_FILE"
     IO_FOLDER = "IO_FOLDER"
     SWAT_EXE = "SWAT_EXE"
+
+    def __init__(self):
+        super(OSFWF_RunSWAT, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "3 - Run SWAT model (OSFWF)"
@@ -91,15 +93,3 @@ class OSFWF_RunSWAT(GeoAlgorithm):
         if runres != 0:
             raise GeoAlgorithmExecutionException('SWAT run unsuccessful')
 
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

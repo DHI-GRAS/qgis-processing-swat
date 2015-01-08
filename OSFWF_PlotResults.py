@@ -28,13 +28,8 @@
 
 import os
 from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
-from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterString import ParameterString
-from processing.parameters.ParameterSelection import ParameterSelection
-from processing.parameters.ParameterNumber import ParameterNumber
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 from datetime import date, timedelta, datetime
 from read_SWAT_out import read_SWAT_time
 import matplotlib
@@ -43,7 +38,7 @@ from matplotlib.pylab import *
 import ASS_module4_Results
 import ASS_module4_Results_weekly
 
-class OSFWF_PlotResults(GeoAlgorithm):
+class OSFWF_PlotResults(SWATAlgorithm):
 
     SRC_FOLDER = "SRC_FOLDER"
     ASS_MODE = "ASS_MODE"
@@ -51,6 +46,9 @@ class OSFWF_PlotResults(GeoAlgorithm):
     STARTDATE = "STARTDATE"
     OBSFILE = "OBSFILE"
     REACH_ID = "REACH_ID"
+
+    def __init__(self):
+        super(OSFWF_PlotResults, self).__init__(__file__)
 
     def defineCharacteristics(self):
         self.name = "5 - Plot results (OSFWF)"
@@ -81,15 +79,3 @@ class OSFWF_PlotResults(GeoAlgorithm):
         ASS_enddate = SWAT_enddate
         ASS_module4_Results.Results(OBSFILE, str(STARTDATE), ASS_startdate, ASS_enddate, ASS_FOLDER, REACH_ID)
 #        ASS_module4_Results.Results(OBSFILE, STARTDATE, ASS_startdate, ASS_enddate, ASS_FOLDER, REACH_ID)
-
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")

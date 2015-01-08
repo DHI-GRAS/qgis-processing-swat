@@ -26,21 +26,16 @@
 ***************************************************************************
 """
 
-import os
 import shutil
+import os
 from datetime import date, timedelta, datetime
 import math
-from PyQt4 import QtGui
-from processing.core.GeoAlgorithm import GeoAlgorithm
-from processing.core.WrongHelpFileException import WrongHelpFileException
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
-##from processing.parameters.ParameterSelection import ParameterSelection
-from processing.parameters.ParameterFile import ParameterFile
-from processing.parameters.ParameterNumber import ParameterNumber
-
+from processing.core.parameters import *
+from SWATAlgorithm import SWATAlgorithm
 import GetGfsClimateData
 
-class OSFWF_GetGfsData(GeoAlgorithm):
+class OSFWF_GetGfsData(SWATAlgorithm):
 
     PCP_DST_FOLDER = "PCP_DST_FOLDER"
     TMAX_DST_FOLDER = "TMAX_DST_FOLDER"
@@ -49,6 +44,9 @@ class OSFWF_GetGfsData(GeoAlgorithm):
     RIGHT_LONG = "RIGHT_LONG"
     TOP_LAT = "TOP_LAT"
     BOTTOM_LAT = "BOTTOM_LAT"
+
+    def __init__(self):
+        SWATAlgorithm.__init__(self, __file__)
 
     def defineCharacteristics(self):
         self.name = "1.1 - Get new NOAA-GFS data (OSFWF)"
@@ -138,14 +136,3 @@ class OSFWF_GetGfsData(GeoAlgorithm):
 
                 log_file.close()
 
-    def getIcon(self):
-        return  QtGui.QIcon(os.path.dirname(__file__) + "/images/tigerNET.png")
-
-    def helpFile(self):
-        [folder, filename] = os.path.split(__file__)
-        [filename, _] = os.path.splitext(filename)
-        helpfile = str(folder) + os.sep + "doc" + os.sep + filename + ".html"
-        if os.path.exists(helpfile):
-            return helpfile
-        else:
-            raise WrongHelpFileException("Sorry, no help is available for this algorithm.")
