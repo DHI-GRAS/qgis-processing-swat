@@ -75,9 +75,9 @@ class MDWF_GenModelFiles(SWATAlgorithm):
         self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_FCFILE, "Name of forecast dates file", 'ForecastDates.txt'))
         self.addParameter(ParameterNumber(MDWF_GenModelFiles.MODEL_PCPFAC, "Precipitation scaling factor", 0.1, 10.0, 1.0))
         self.addParameter(ParameterFile(MDWF_GenModelFiles.MODEL_CENTROIDFILE, "Model sub-basin centroid shapefile (in lat-lon)", False, False))
-        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_LATCOLUMN, "Name centroid file column holding Latitude", 'Y'))
-        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_LONCOLUMN, "Name centroid file column holding Longitude", 'X'))
-        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_ELEVCOLUMN, "Name centroid file column holding Elevation", 'Mean'))
+        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_LATCOLUMN, "Name centroid file column holding Latitude", 'YCOORD'))
+        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_LONCOLUMN, "Name centroid file column holding Longitude", 'XCOORD'))
+        self.addParameter(ParameterString(MDWF_GenModelFiles.MODEL_ELEVCOLUMN, "Name centroid file column holding Elevation", 'mean'))
 
     def processAlgorithm(self, progress):
         MODEL_FILEPATH = self.getParameterValue(MDWF_GenModelFiles.MODEL_FILEPATH)
