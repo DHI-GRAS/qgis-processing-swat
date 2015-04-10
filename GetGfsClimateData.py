@@ -63,11 +63,24 @@ def GfsForecastImport(StartDate, GfsVar, level, TargetDirectory, LeftLon, RightL
             if (i <= 24) or (first):
                 iteration +=1
                 progress_percent = iteration / float(number_of_files) * 100
-                UrlToRead =('http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_hd.pl?file=gfs.t' + str(IssueHour).zfill(2) +
-                    'z.mastergrb2f' + str(i).zfill(2)+ '&lev_' + level + '=on&var_' +
-                    GfsVar + '=on&subregion=&leftlon=' + str(LeftLon) + '&rightlon=' + str(RightLon) +
-                    '&toplat=' + str(TopLat) + '&bottomlat=' + str(BottomLat) + '&dir=%2Fgfs.' +
-                    daystr + '%2Fmaster')
+                
+                # This is the download string for 25-km resolution data (from 14th Jan 2015)
+                # http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?file=gfs.t12z.pgrb2.0p25.f006&lev_surface=on&var_APCP=on&subregion=&leftlon=-20&rightlon=55&toplat=40&bottomlat=-40&dir=%2Fgfs.2015011812
+                if day >= date(2015,1,14):
+                    UrlToRead =('http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_0p25.pl?file=gfs.t' + str(IssueHour).zfill(2) +
+                        'z.pgrb2.0p25.f' + str(i).zfill(3)+ '&lev_' + level + '=on&var_' +
+                        GfsVar + '=on&subregion=&leftlon=' + str(LeftLon) + '&rightlon=' + str(RightLon) +
+                        '&toplat=' + str(TopLat) + '&bottomlat=' + str(BottomLat) + '&dir=%2Fgfs.' +
+                        daystr)
+
+                # This is the download string for 50-km resolution data (before 14th Jan 2015)
+                else:
+                    UrlToRead =('http://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_hd.pl?file=gfs.t' + str(IssueHour).zfill(2) +
+                        'z.mastergrb2f' + str(i).zfill(2)+ '&lev_' + level + '=on&var_' +
+                        GfsVar + '=on&subregion=&leftlon=' + str(LeftLon) + '&rightlon=' + str(RightLon) +
+                        '&toplat=' + str(TopLat) + '&bottomlat=' + str(BottomLat) + '&dir=%2Fgfs.' +
+                        daystr + '%2Fmaster')
+                
                 dst_file = DownloadDirectory + os.sep + str(IssueYear)+str(IssueMonth).zfill(2)+str(IssueDay).zfill(2) + '_' + str(i).zfill(2) + '_'  + 'GFS_' + GfsVar + '.grb'
                 urllib.urlretrieve(UrlToRead, dst_file)
                 # Show progress
