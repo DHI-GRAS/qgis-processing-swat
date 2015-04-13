@@ -32,8 +32,8 @@ from datetime import date, timedelta
 import os
 import processing
 from osgeo import gdal
-from gdalconst import *
-import osr
+from osgeo.gdalconst import *
+from osgeo import osr
 import shutil
 import sys
 

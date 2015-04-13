@@ -34,9 +34,9 @@ import processing
 from processing.tools import dataobjects
 from processing.algs.grass.GrassUtils import GrassUtils
 from osgeo import gdal
-from gdalconst import *
+from osgeo.gdalconst import *
 import shutil
-import osr
+from osgeo import osr
 
 def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_folder, LeftLon, RightLon, TopLat, BottomLat, progress):
     """Importing ECMWF temperature data using the

@@ -32,8 +32,8 @@ import os
 import processing
 from processing.tools import dataobjects
 from osgeo import gdal
-from gdalconst import *
-import osr
+from osgeo.gdalconst import *
+from osgeo import osr
 import shutil
 
 def GfsForecastImport(StartDate, GfsVar, level, TargetDirectory, LeftLon, RightLon, TopLat, BottomLat, log_file, progress):

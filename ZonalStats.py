@@ -34,7 +34,7 @@ from processing.tools import dataobjects
 from processing.algs.grass.GrassUtils import GrassUtils
 import numpy
 from osgeo import gdal
-from gdalconst import *
+from osgeo.gdalconst import *
 
 def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column, subcatchmap_res, file_list, log_file, GeoAlgorithmExecutionException, corr_by_num = None, corr_by_fact = None):
 

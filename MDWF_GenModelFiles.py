@@ -37,8 +37,8 @@ from SWATAlgorithm import SWATAlgorithm
 from ModelFile import ModelFile
 from processing.tools import dataobjects
 from processing.algs.grass.GrassUtils import GrassUtils
-import gdal
-from gdalconst import *
+from osgeo import gdal
+from osgeo.gdalconst import *
 import processing
 
 class MDWF_GenModelFiles(SWATAlgorithm):
