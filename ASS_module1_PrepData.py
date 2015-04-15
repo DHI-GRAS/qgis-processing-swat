@@ -75,10 +75,12 @@ def MakedrainsTo(src_folder):
                 catch[reach] = new_inflow
                 j = [i for i in catch[reach] if i > nbrch]
 
+    catchs=sorted(catch, key=lambda k: len(catch[k]))
+
     drainsTo_dict = {}
     for i in range(1,nbrch+1):
         tempIndex = []
-        for k in catch.keys():
+        for k in catchs:
             for m in range(0,len(catch[k])):
                 if catch[k][m] == i:
                     tempIndex.append(k)
