@@ -129,9 +129,14 @@ def kf_flows(obs_file, Ass_folder, nbrch, Enddate, Startdate, RR_enddate, RR_sta
                         TempIndex_add.append(p)
                         p = int(drainsTo[p-1])
 
-            drainsTo_max[k+1] = max(TempIndex)
-            if len(TempIndex_add)>0:
-                drainsTo_add_max[k+1] = max(TempIndex_add)
+            for i in outlets:
+                for j in TempIndex:
+                    if i==j:
+                        drainsTo_max[k+1] = j
+                if len(TempIndex_add)>0:
+                    for j in TempIndex_add:
+                        if i==j:
+                            drainsTo_add_max[k+1] = j
 
     Reaches = {}
     for i in range(0,nb_outlets):
@@ -367,3 +372,4 @@ def kf_flows(obs_file, Ass_folder, nbrch, Enddate, Startdate, RR_enddate, RR_sta
             file_writer.writerow(output[i])
 
     return x,x2,x3,P_2,P_3,Innov,PredStd,Loc
+
