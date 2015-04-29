@@ -66,9 +66,9 @@ class MDWF_Calibrate_c(SWATAlgorithm):
         model = ModelFile(MODEL_FILE)
         ctlfilename = SRC_FOLDER + os.sep + model.desc['ModelName'] + '.pst'
         ctlfile = open(ctlfilename,'w')
-        ctlfile.writelines(pestspecs.CFfirstline + '\r\n')
-        ctlfile.writelines('* control data\r\n')
-        ctlfile.writelines(pestspecs.RSTFLE + ' ' + pestspecs.PESTMODE + '\r\n')
+        ctlfile.writelines(pestspecs.CFfirstline + '\n')
+        ctlfile.writelines('* control data\n')
+        ctlfile.writelines(pestspecs.RSTFLE + ' ' + pestspecs.PESTMODE + '\n')
         #find number of parameters and prepare the parameter block
         filelist = os.listdir(SRC_FOLDER)
         NPAR = 0
@@ -76,17 +76,17 @@ class MDWF_Calibrate_c(SWATAlgorithm):
         for f in filelist:
             if '.pbf' in f:
                 NPAR = NPAR + 1
-                PARBLOCK.append(open(SRC_FOLDER + os.sep + f).readlines()[0] + '\r\n')
+                PARBLOCK.append(open(SRC_FOLDER + os.sep + f).readlines()[0] + '\n')
         #find number of observations and prepare the observation block
         OBSBLOCK = []
         for f in filelist:
-            if '.obf' in f:
+            if 'observation_block.obf' in f:
                 cobsblock = open(SRC_FOLDER + os.sep + f).readlines()
                 for i in range(0,len(cobsblock)):
                     OBSBLOCK.append(cobsblock[i])
         NOBS = len(OBSBLOCK)
         if NPAR > 0 and NOBS > 0:
-            ctlfile.writelines(str(NPAR).ljust(4) + str(NOBS).ljust(7) + str(pestspecs.NPARGP).ljust(4) + str(pestspecs.NPRIOR).ljust(4) + str(pestspecs.NOBSGP).ljust(4) + '\r\n')
+            ctlfile.writelines(str(NPAR).ljust(4) + str(NOBS).ljust(7) + str(pestspecs.NPARGP).ljust(4) + str(pestspecs.NPRIOR).ljust(4) + str(pestspecs.NOBSGP).ljust(4) + '\n')
         else:
             raise GeoAlgorithmExecutionException('Number of observations and number of parameters must be larger than zero')
         #find number of template files and prepare template block
@@ -94,42 +94,41 @@ class MDWF_Calibrate_c(SWATAlgorithm):
         TPLBLOCK = []
         for f in filelist:
             if '.tpl' in f:
-                TPLBLOCK.append(f + ' ' + f.split('.')[0].split('_')[0] + '.' + f.split('.')[0].split('_')[1] + '\r\n')
+                TPLBLOCK.append(f + ' ' + f.split('.')[0].split('_')[0] + '.' + f.split('.')[0].split('_')[1] + '\n')
                 NTPLFLE = NTPLFLE + 1
         #find number of instruction files and prepare instruction block
         NINSFLE = 0
         INSBLOCK = []
         for f in filelist:
             if '.ins' in f:
-                INSBLOCK.append(f + ' output.rch\r\n')
+                INSBLOCK.append(f + ' output.rch\n')
                 NINSFLE = NINSFLE + 1
         if NTPLFLE > 0 and NINSFLE > 0:
-            ctlfile.writelines(str(NTPLFLE).ljust(4) + str(NINSFLE).ljust(4) + str(pestspecs.PRECIS).ljust(7) + str(pestspecs.DPOINT).ljust(8) + str(pestspecs.NUMCOM).ljust(3) + str(pestspecs.JACFILE).ljust(3) + str(pestspecs.MESSFILE).ljust(3) + '\r\n')
+            ctlfile.writelines(str(NTPLFLE).ljust(4) + str(NINSFLE).ljust(4) + str(pestspecs.PRECIS).ljust(7) + str(pestspecs.DPOINT).ljust(8) + str(pestspecs.NUMCOM).ljust(3) + str(pestspecs.JACFILE).ljust(3) + str(pestspecs.MESSFILE).ljust(3) + '\n')
         else:
             raise GeoAlgorithmExecutionException('Number of template files and number of instruction files must be larger than zero')
-        ctlfile.writelines(str(pestspecs.RLAMBDA1).ljust(6) + str(pestspecs.RLAMFAC).ljust(6) + str(pestspecs.PHIRATSUF).ljust(6) + str(pestspecs.PHIREDLAM).ljust(6) + str(pestspecs.NUMLAM) + '\r\n')
-        ctlfile.writelines(str(pestspecs.RELPARMAX).ljust(6) + str(pestspecs.FACPARMAX).ljust(6) + str(pestspecs.FACORIG) + '\r\n')
-        ctlfile.writelines(str(pestspecs.PHIREDSWH) + '\r\n')
-        ctlfile.writelines(str(pestspecs.NOPTMAX).ljust(5) + str(pestspecs.PHIREDSTP).ljust(7) + str(pestspecs.NPHISTP).ljust(4) + str(pestspecs.NPHINORED).ljust(4) + str(pestspecs.RELPARSTP).ljust(7) + str(pestspecs.NRELPAR) + '\r\n')
-        ctlfile.writelines(str(pestspecs.ICOV).ljust(3) + str(pestspecs.ICOR).ljust(3) + str(pestspecs.IEIG) + '\r\n')
-        ctlfile.writelines('* parameter groups\r\n')
+        ctlfile.writelines(str(pestspecs.RLAMBDA1).ljust(6) + str(pestspecs.RLAMFAC).ljust(6) + str(pestspecs.PHIRATSUF).ljust(6) + str(pestspecs.PHIREDLAM).ljust(6) + str(pestspecs.NUMLAM) + '\n')
+        ctlfile.writelines(str(pestspecs.RELPARMAX).ljust(6) + str(pestspecs.FACPARMAX).ljust(6) + str(pestspecs.FACORIG) + '\n')
+        ctlfile.writelines(str(pestspecs.PHIREDSWH) + '\n')
+        ctlfile.writelines(str(pestspecs.NOPTMAX).ljust(5) + str(pestspecs.PHIREDSTP).ljust(7) + str(pestspecs.NPHISTP).ljust(4) + str(pestspecs.NPHINORED).ljust(4) + str(pestspecs.RELPARSTP).ljust(7) + str(pestspecs.NRELPAR) + '\n')
+        ctlfile.writelines(str(pestspecs.ICOV).ljust(3) + str(pestspecs.ICOR).ljust(3) + str(pestspecs.IEIG) + '\n')
+        ctlfile.writelines('* parameter groups\n')
         for i in range(0,pestspecs.NPARGP):
-            ctlfile.writelines(parspecs.PARAMETERS[i].ljust(13) + parspecs.INCTYP[i].ljust(9) + str(parspecs.DERINC[i]).ljust(7) + str(parspecs.DERINCLB[i]).ljust(7) + parspecs.FORCEN[i].ljust(9) + str(parspecs.DERINCMUL[i]).ljust(7) +parspecs.DERMTHD[i] + '\r\n')
-        ctlfile.writelines('* parameter data\r\n')
+            ctlfile.writelines(parspecs.PARAMETERS[i].ljust(13) + parspecs.INCTYP[i].ljust(9) + str(parspecs.DERINC[i]).ljust(7) + str(parspecs.DERINCLB[i]).ljust(7) + parspecs.FORCEN[i].ljust(9) + str(parspecs.DERINCMUL[i]).ljust(7) +parspecs.DERMTHD[i] + '\n')
+        ctlfile.writelines('* parameter data\n')
         ctlfile.writelines(PARBLOCK)
-        ctlfile.writelines('* observation groups\r\n')
-        ctlfile.writelines(OBGNME + '\r\n')
-        ctlfile.writelines('* observation data\r\n')
+        ctlfile.writelines('* observation groups\n')
+        ctlfile.writelines(OBGNME + '\n')
+        ctlfile.writelines('* observation data\n')
         ctlfile.writelines(OBSBLOCK)
-        ctlfile.writelines('* model command line\r\n')
-        ctlfile.writelines('pest_swatrun.bat\r\n')
+        ctlfile.writelines('* model command line\n')
+        ctlfile.writelines('pest_swatrun.bat\n')
         batfile = open(SRC_FOLDER + os.sep + 'pest_swatrun.bat','w')
-        batfile.writelines('@ECHO OFF \r\n')
-        batfile.writelines('cd ' + SRC_FOLDER + '\r\n')
-        batfile.writelines(SWAT_EXE + '> nul\r\n')
+        batfile.writelines('@ECHO OFF \n')
+        batfile.writelines('cd ' + SRC_FOLDER + '\n')
+        batfile.writelines(SWAT_EXE + '> nul\n')
         batfile.close()
-        ctlfile.writelines('* model input/output\r\n')
+        ctlfile.writelines('* model input/output\n')
         ctlfile.writelines(TPLBLOCK)
         ctlfile.writelines(INSBLOCK)
         ctlfile.close()
-
