@@ -27,6 +27,8 @@
 """
 
 from SWAT_parameter_specs import SWAT_parameter_specs
+from processing_SWAT.WG9HMUtils import WG9HMUtils
+import os
 
 parspecs = SWAT_parameter_specs()
 
@@ -35,8 +37,8 @@ class SWAT_PEST_specs():
     def __init__(self):
         # Modify this class to change settings for SWAT-PEST interaction
 
-        # Folder where PEST executables are stored. Adjust depending on installation
-        self.PESTexeFolder = 'c:\\Program Files (x86)\\MapWindow\\Plugins\\MWSWAT2009\\PEST' ##'c:\\Program Files (x86)\\PEST_13'
+        # Folder where PEST executables are stored. 
+        self.PESTexeFolder = os.path.join(WG9HMUtils.mapwindowPath(),'Plugins','MWSWAT2009','PEST') 
 
         # Parameter identifier used in PEST template files
         self.ptf = '$'

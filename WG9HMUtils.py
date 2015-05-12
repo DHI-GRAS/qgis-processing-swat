@@ -35,7 +35,7 @@ class WG9HMUtils:
     def mapwindowPath():
         folder = ProcessingConfig.getSetting(WG9HMUtils.MAPWINDOW_FOLDER)
         if folder is None:
-            folder = "C:\Program Files (x86)\MapWindow\MapWindow.exe"
+            folder = r"C:\Program Files (x86)\MapWindow"
             
         return folder
 
