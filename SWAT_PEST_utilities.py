@@ -74,7 +74,7 @@ def create_PEST_template(src_folder, SWATparameter, parameter_name, subid, hruid
             ntfile.writelines(lines)
             ntfile.close()
         else:
-            line1 = 'ptf ' + pestspecs.ptf + '\r\n'
+            line1 = 'ptf ' + pestspecs.ptf + '\n'
             lines = open(SWAT_filename).readlines()
             changeline = lines[specs.PARLINES[index]-1]
             if (SWATparameter[0:5]=='RFINC') | (SWATparameter[0:6]=='TMPINC') | (SWATparameter[0:5]=='SOL_Z') | (SWATparameter[0:7]=='SOL_AWC') | (SWATparameter[0:5]=='SOL_K'):
