@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -37,6 +37,7 @@ from processing.core.ProcessingConfig import ProcessingConfig, Setting
 from processing_SWAT.OSFWF_GetGfsData import OSFWF_GetGfsData
 from processing_SWAT.OSFWF_GetRfeData import OSFWF_GetRfeData
 from processing_SWAT.OSFWF_GetECMWFData import OSFWF_GetECMWFData
+from processing_SWAT.OSFWF_GetTRMMData import OSFWF_GetTRMMData
 from processing_SWAT.OSFWF_UpdateModelClimateData import OSFWF_UpdateModelClimateData
 from processing_SWAT.OSFWF_RunSWAT import OSFWF_RunSWAT
 from processing_SWAT.OSFWF_Assimilate_a import OSFWF_Assimilate_a
@@ -45,6 +46,7 @@ from processing_SWAT.OSFWF_Assimilate_c import OSFWF_Assimilate_c
 from processing_SWAT.OSFWF_Assimilate_d import OSFWF_Assimilate_d
 from processing_SWAT.OSFWF_PlotResults import OSFWF_PlotResults
 from processing_SWAT.MDWF_DevSWAT import MDWF_DevSWAT
+#from processing_SWAT.MDWF_runBudyko import MDWF_runBudyko
 from processing_SWAT.MDWF_GenModelFiles import MDWF_GenModelFiles
 from processing_SWAT.MDWF_GenModelClimateData import MDWF_GenModelClimateData
 from processing_SWAT.MDWF_RunSWAT import MDWF_RunSWAT
@@ -78,7 +80,7 @@ class WG9HMAlgorithmProvider(AlgorithmProvider):
     def createAlgsList(self):
 
         # Add preloaded algs here
-        self.preloadedAlgs = [OSFWF_GetGfsData(),OSFWF_GetRfeData(),OSFWF_GetECMWFData(),OSFWF_UpdateModelClimateData(),OSFWF_RunSWAT(),
+        self.preloadedAlgs = [OSFWF_GetGfsData(),OSFWF_GetRfeData(),OSFWF_GetECMWFData(),OSFWF_GetTRMMData(),OSFWF_UpdateModelClimateData(),OSFWF_RunSWAT(),
             OSFWF_PlotResults(),MDWF_DevSWAT(),MDWF_GenModelFiles(),MDWF_GenModelClimateData(),MDWF_RunSWAT(),MDWF_PlotResults(),MDWF_Calibrate_a(), MDWF_Calibrate_b(),
             MDWF_Calibrate_c(),MDWF_Calibrate_d(),MDWF_Sensan_a(),MDWF_Sensan_b(),MDWF_Sensan_c(),MDWF_Sensan_d(),OSFWF_Assimilate_a(),OSFWF_Assimilate_b(),OSFWF_Assimilate_c(),OSFWF_Assimilate_d(),
             OSFWF_DailyAssimilation()]

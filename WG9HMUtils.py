@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -30,13 +30,13 @@ from processing.core.ProcessingConfig import ProcessingConfig
 
 class WG9HMUtils:
     MAPWINDOW_FOLDER = 'MAPWINDOW_FOLDER'
-    
+
     @staticmethod
     def mapwindowPath():
         folder = ProcessingConfig.getSetting(WG9HMUtils.MAPWINDOW_FOLDER)
         if folder is None:
-            folder = r"C:\Program Files (x86)\MapWindow"
-            
+            folder = r"C:\Users\s113332\.qgis2\python\plugins\QSwat"
+
         return folder
 
 

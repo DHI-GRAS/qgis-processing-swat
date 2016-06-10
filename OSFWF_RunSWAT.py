@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -35,6 +35,7 @@ from processing.core.parameters import *
 from SWATAlgorithm import SWATAlgorithm
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from ClimateStationsSWAT import ClimateStationsSWAT
+from ClimateStationsSWAT_old import ClimateStationsSWAT_old
 from ModelFile import ModelFile
 
 class OSFWF_RunSWAT(SWATAlgorithm):
@@ -42,6 +43,7 @@ class OSFWF_RunSWAT(SWATAlgorithm):
     MODEL_FILE = "MODEL_FILE"
     IO_FOLDER = "IO_FOLDER"
     SWAT_EXE = "SWAT_EXE"
+    VERSION = "VERSION"
 
     def __init__(self):
         super(OSFWF_RunSWAT, self).__init__(__file__)
@@ -52,18 +54,32 @@ class OSFWF_RunSWAT(SWATAlgorithm):
         self.addParameter(ParameterFile(OSFWF_RunSWAT.MODEL_FILE, "Model description file", False, False))
         self.addParameter(ParameterFile(OSFWF_RunSWAT.IO_FOLDER, "Model input/output folder", True))
         self.addParameter(ParameterFile(OSFWF_RunSWAT.SWAT_EXE, "SWAT executable", False, False))
+        self.addParameter(ParameterSelection(OSFWF_RunSWAT.VERSION, "SWAT GUI Interface used in model construction", ['QSWAT','MWSWAT'], False))
 
     def processAlgorithm(self, progress):
         MODEL_FILE = self.getParameterValue(OSFWF_RunSWAT.MODEL_FILE)
         model = ModelFile(MODEL_FILE)
+        VERSION = self.getParameterValue(OSFWF_RunSWAT.VERSION)
         CSTATIONS_FILE = model.Path + os.sep + model.desc['Stations']
+        if VERSION == 0:
+            CSTATIONS_FILETemp = model.Path + os.sep + model.desc['StationsTemp']
         IO_FOLDER = self.getParameterValue(OSFWF_RunSWAT.IO_FOLDER)
         SWAT_EXE = self.getParameterValue(OSFWF_RunSWAT.SWAT_EXE)
 
+
         # Updating climate files
-        CSTATIONS = ClimateStationsSWAT(CSTATIONS_FILE)
+        if VERSION == 0:
+            CSTATIONS_TEMP = ClimateStationsSWAT(CSTATIONS_FILETemp)
+            CSTATIONS = ClimateStationsSWAT(CSTATIONS_FILE)
+        else:
+            CSTATIONS = ClimateStationsSWAT_old(CSTATIONS_FILE)
+
         log_file = open(IO_FOLDER + os.sep + "cstations_log.txt", "w")
-        last_pcp_date,last_tmp_date = CSTATIONS.writeSWATrunClimateFiles(IO_FOLDER,log_file)
+        if VERSION == 0:
+            last_pcp_date = CSTATIONS.writeSWATrunClimateFiles_pcp(IO_FOLDER,log_file)
+            last_tmp_date = CSTATIONS.writeSWATrunClimateFiles_tmp(IO_FOLDER,log_file)
+        else:
+            last_pcp_date,last_tmp_date = CSTATIONS.writeSWATrunClimateFiles(IO_FOLDER,log_file)
         log_file.close()
 
         # Updating cio file

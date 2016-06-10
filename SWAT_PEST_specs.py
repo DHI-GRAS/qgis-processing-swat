@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -37,8 +37,10 @@ class SWAT_PEST_specs():
     def __init__(self):
         # Modify this class to change settings for SWAT-PEST interaction
 
-        # Folder where PEST executables are stored. 
-        self.PESTexeFolder = os.path.join(WG9HMUtils.mapwindowPath(),'Plugins','MWSWAT2009','PEST') 
+        # Folder where PEST executables are stored.
+        #self.PESTexeFolder = os.path.join(WG9HMUtils.mapwindowPath(),'Plugins','MWSWAT2009','PEST')
+        #Line modified for QSWAT
+        self.PESTexeFolder = os.path.join(WG9HMUtils.mapwindowPath(),'PEST')
 
         # Parameter identifier used in PEST template files
         self.ptf = '$'

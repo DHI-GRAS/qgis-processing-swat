@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -35,6 +35,7 @@ from processing.core.parameters import *
 from SWATAlgorithm import SWATAlgorithm
 from ModelFile import ModelFile
 from ClimateStationsSWAT import ClimateStationsSWAT
+from ClimateStationsSWAT_old import ClimateStationsSWAT_old
 from ZonalStats import ZonalStats
 
 class OSFWF_UpdateModelClimateData(SWATAlgorithm):
@@ -44,6 +45,7 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
     TMAX_DST_FOLDER = "TMAX_DST_FOLDER"
     TMIN_DST_FOLDER = "TMIN_DST_FOLDER"
     SUBCATCH_RES = 'SUBCATCH_RES'
+    VERSION = 'VERSION'
 
     def __init__(self):
         super(OSFWF_UpdateModelClimateData, self).__init__(__file__)
@@ -56,6 +58,7 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
         self.addParameter(ParameterFile(OSFWF_UpdateModelClimateData.TMAX_DST_FOLDER, "Maximum temperature folder", True, False))
         self.addParameter(ParameterFile(OSFWF_UpdateModelClimateData.TMIN_DST_FOLDER, "Minimum temperature folder", True, False))
         self.addParameter(ParameterNumber(OSFWF_UpdateModelClimateData.SUBCATCH_RES, "Resolution of subcatchment map", 0.001, 0.5, 0.01))
+        self.addParameter(ParameterSelection(OSFWF_UpdateModelClimateData.VERSION, "SWAT GUI Interface used in model construction", ['QSWAT','MWSWAT'], False))
 
     def processAlgorithm(self, progress):
         progress.setConsoleInfo("Loading model and data files...")
@@ -65,6 +68,7 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
         tmax_folder = str(self.getParameterValue(OSFWF_UpdateModelClimateData.TMAX_DST_FOLDER))
         tmin_folder = str(self.getParameterValue(OSFWF_UpdateModelClimateData.TMIN_DST_FOLDER))
         subcatchmap_res = float(self.getParameterValue(OSFWF_UpdateModelClimateData.SUBCATCH_RES))
+        VERSION = self.getParameterValue(OSFWF_UpdateModelClimateData.VERSION)
 
         # Check inputs
         for folder in [pcp_folder, tmax_folder, tmin_folder]:
@@ -83,16 +87,30 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
         log_file.write(self.name + ' run date: ' + now.strftime('%Y%m%d') + '\n')
 
         # Load SWAT stations file
-        stations = ClimateStationsSWAT(model.Path + os.sep + model.desc['Stations'])
+        # If QSWAT
+        if VERSION == 0:
+            stations = ClimateStationsSWAT(model.Path + os.sep + model.desc['Stations'])
+            stations_temp =  ClimateStationsSWAT(model.Path + os.sep + model.desc['StationsTemp'])
+        # If MWSWAT
+        else:
+            stations = ClimateStationsSWAT_old(model.Path + os.sep + model.desc['Stations'])
 
         progress.setConsoleInfo("Reading old climate data...")
-        # Getting SWAT .pcp data
-        pcp_juliandates, first_pcp_date, last_pcp_date, pcp_array = stations.readSWATpcpFiles(log_file)
+        # Getting SWAT .pcp data - QSWAT model
+        if VERSION == 0:
+            pcp_juliandates, first_pcp_date, last_pcp_date, pcp_array = stations.readSWATpcpFiles(log_file)
 ##        numpy.savetxt(model.Path + os.sep + 'pcp_array.csv', pcp_array, delimiter=",")
-##        log_file.write(str(pcp_dates))
-
-        # Getting SWAT .tmp data
-        tmp_juliandates, first_tmp_date, last_tmp_date, tmp_max_array, tmp_min_array = stations.readSWATtmpFiles(log_file)
+            ##log_file.write(str(pcp_array))
+            # Getting SWAT .tmp data
+            tmp_juliandates, first_tmp_date, last_tmp_date, tmp_max_array, tmp_min_array = stations_temp.readSWATtmpFiles(log_file)
+##        numpy.savetxt(model.Path + os.sep + 'tmp_max_array.csv', tmp_max_array, delimiter=",")
+        else:
+            # Getting SWAT .pcp data - MWSWAT model
+            pcp_juliandates, first_pcp_date, last_pcp_date, pcp_array = stations.readSWATpcpFiles(log_file)
+##        numpy.savetxt(model.Path + os.sep + 'pcp_array.csv', pcp_array, delimiter=",")
+            ##log_file.write(str(pcp_array))
+            # Getting SWAT .tmp data
+            tmp_juliandates, first_tmp_date, last_tmp_date, tmp_max_array, tmp_min_array = stations.readSWATtmpFiles(log_file)
 ##        numpy.savetxt(model.Path + os.sep + 'tmp_max_array.csv', tmp_max_array, delimiter=",")
 
         # Delete last forecast in .pcp and .tmp data if Real Time model
@@ -230,7 +248,10 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
             pcp_array = numpy.concatenate((pcp_array, new_pcp_array), axis=0)
             progress.setConsoleInfo("Writing new precipitation files...")
             # Write files
-            stations.writeSWATpcpFiles(pcp_juliandates, pcp_array, log_file)
+            if VERSION == 0:
+                stations.writeSWATpcpFiles(first_pcp_date, pcp_array, log_file)
+            else:
+                stations.writeSWATpcpFiles(pcp_juliandates, pcp_array, log_file)
 
         progress.setConsoleInfo("Extracting temperature data...")
         # Process Temperature files
@@ -281,7 +302,10 @@ class OSFWF_UpdateModelClimateData(SWATAlgorithm):
             # TMIN
             tmp_min_array = numpy.concatenate((tmp_min_array, new_tmp_min_array), axis=0)
             # Write files
-            stations.writeSWATtmpFiles(tmp_juliandates, tmp_max_array, tmp_min_array, log_file)
+            if VERSION == 0:
+                stations.writeSWATtmpFiles(first_tmp_date, tmp_max_array, tmp_min_array, log_file)
+            else:
+                stations.writeSWATtmpFiles(tmp_juliandates, tmp_max_array, tmp_min_array, log_file)
 
             progress.setConsoleInfo("Update model files...")
             # Updating forecast file

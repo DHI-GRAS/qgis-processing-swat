@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -48,7 +48,7 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
         os.mkdir(DownloadDirectory)
 
     # Get max enddate and min startdate from website
-    UrlToRead = 'http://data-portal.ecmwf.int/data/d/interim_full_daily/'
+    UrlToRead = 'http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/'
     dst_file = DownloadDirectory + os.sep + 'Portal_site.txt'
     urllib.urlretrieve(UrlToRead, dst_file)
     text = open(dst_file,'r').read()
@@ -105,13 +105,13 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
                 for f in Max_Daily_FileList:
                     shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
                 for f in Max_Daily_FileList:
-                    try:    
+                    try:
                         os.remove(f)
                     except:
                         pass
                 for f in Min_Daily_FileList:
                     shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Min_Daily_FileList:    
+                for f in Min_Daily_FileList:
                     try:
                         os.remove(f)
                     except:
@@ -136,13 +136,13 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
                 for f in Max_Daily_FileList:
                     shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
                 for f in Max_Daily_FileList:
-                    try:    
+                    try:
                         os.remove(f)
                     except:
                         pass
                 for f in Min_Daily_FileList:
                     shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Min_Daily_FileList:    
+                for f in Min_Daily_FileList:
                     try:
                         os.remove(f)
                     except:

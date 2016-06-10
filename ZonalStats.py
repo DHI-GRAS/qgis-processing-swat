@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -221,13 +221,20 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
             if (numpy.isnan(R_map_array[catchment_maps[str(catchment)]>0])).any():
                 resultTS[ind,catchment-1] = float(-99.0)
             elif corr_by_num != None:
-                value = numpy.sum( (R_map_array+corr_by_num) * catchment_maps[str(catchment)])
+                R_map_array_catchment =  (R_map_array+corr_by_num) * catchment_maps[str(catchment)]
+                R_map_array_catchment[numpy.isnan(R_map_array_catchment)] = 0
+                value = numpy.sum(R_map_array_catchment)
                 resultTS[ind,catchment-1] = float(value)
             elif corr_by_fact != None:
-                value = numpy.sum( (R_map_array*corr_by_fact) * catchment_maps[str(catchment)])
+                R_map_array_catchment = (R_map_array*corr_by_fact) * catchment_maps[str(catchment)]
+                R_map_array_catchment[numpy.isnan(R_map_array_catchment)] = 0
+                value = numpy.sum(R_map_array_catchment )
                 resultTS[ind,catchment-1] = float(value)
             else:
-                value = numpy.sum(R_map_array * catchment_maps[str(catchment)])
+                R_map_array_catchment = R_map_array * catchment_maps[str(catchment)]
+                #Remove NoDataValues outside of catchment
+                R_map_array_catchment[numpy.isnan(R_map_array_catchment)] = 0
+                value = numpy.sum(R_map_array_catchment)
                 resultTS[ind,catchment-1] = float(value)
 
 

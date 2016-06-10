@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -45,7 +45,7 @@ import ASS_Evaluation
 from ASS_utilities import ReadObsFlowsAss
 import GetGfsClimateData
 from ModelFile import ModelFile
-from ClimateStationsSWAT import ClimateStationsSWAT
+from ClimateStationsSWAT_old import ClimateStationsSWAT_old
 from ZonalStats import ZonalStats
 from datetime import date, timedelta, datetime
 from processing.core.parameters import *
@@ -58,31 +58,31 @@ class OSFWF_DailyAssimilation(SWATAlgorithm):
 
     def __init__(self):
         super(OSFWF_DailyAssimilation, self).__init__(__file__)
-        
+
     def defineCharacteristics(self):
         self.name = "Daily Assimilation (OSFWF)"
         self.group = "Operational simulation and forecasting workflow (OSFWF)"
 
     def processAlgorithm(self, progress):
         progress.setConsoleInfo("Downloading new weather data...")
-        SRC_FOLDER = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TxtInOut' #SWAT output folder
-        ASS_FOLDER = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\F_AssFolder'#storage location for assimilation input
-        OBS_FILE = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Kavango_Showcase_new\\In-situ_discharge\\Rundu.csv' #file with in-situ observations
-        pcp_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\APCP'
-        tmax_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TMAX'
-        tmin_folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\TMIN'
-        forecast_dates_file = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\\ForecastDates.txt"
-        logfilename = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\\log.txt"
-        climstatfilename = "p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\Climate_stations\KavangoStations.txt"
+        SRC_FOLDER = 'C:\Users\s113332\Desktop\Kavango_Showcase\SWAT_model\Scenarios\Default\TxtInOut' #SWAT output folder
+        ASS_FOLDER = 'C:\Users\s113332\Desktop\Kavango_Showcase\SWAT_model\Assimilation_2016'#storage location for assimilation input
+        OBS_FILE = 'C:\Users\s113332\Desktop\Kavango_Showcase\In-situ_discharge\\Rundu.csv' #file with in-situ observations
+        pcp_folder = 'C:\Users\s113332\Desktop\Kavango_Showcase\NOAA-GFS_climate_forcing\\APCP'
+        tmax_folder = 'C:\Users\s113332\Desktop\Kavango_Showcase\NOAA-GFS_climate_forcing\\TMAX'
+        tmin_folder = 'C:\Users\s113332\Desktop\Kavango_Showcase\NOAA-GFS_climate_forcing\\TMIN'
+        forecast_dates_file = "C:\Users\s113332\Desktop\Kavango_Showcase\\ForecastDates.txt"
+        logfilename = "C:\Users\s113332\Desktop\Kavango_Showcase\\log.txt"
+        climstatfilename = "C:\Users\s113332\Desktop\Kavango_Showcase\NOAA-GFS_climate_forcing\Climate_stations\\KavangoStations.txt"
         subcatchmap_res = 0.01
         correct_factor = 0.67
-        model = ModelFile("p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Kavango_Showcase_new\\ModelDescription.txt")
+        model = ModelFile("C:\Users\s113332\Desktop\Kavango_Showcase\\ModelDescription.txt")
         NBRCH = 12 #number of reaches in the model
         REACH_ID = 10 #reach for which in-situ data is available
         OUTSPECS = SWAT_output_format_specs()
         SWAT_EXE = SRC_FOLDER + os.sep + "swat2009DtuEnv.exe"
         Issue_Date = date.today()
-        Ass_Out_Folder = 'p:\\ACTIVE\\TigerNET 30966 PBAU\\Kavango\\Assimilation\\F_Ass_Out_' + str(Issue_Date)
+        Ass_Out_Folder = 'C:\Users\s113332\Desktop\Kavango_Showcase\SWAT_model\Assimilation_2016\\F_Ass_Out_' + str(Issue_Date)
 
         # Download new NOAA GFS data
         for var in ['APCP','TMAX','TMIN']:
@@ -143,7 +143,7 @@ class OSFWF_DailyAssimilation(SWATAlgorithm):
         log_file.write(self.name + ' run date: ' + now.strftime('%Y%m%d') + '\n')
 
         # Load SWAT stations file
-        stations = ClimateStationsSWAT(climstatfilename)
+        stations = ClimateStationsSWAT_old(climstatfilename)
 
         progress.setConsoleInfo("Reading old climate data...")
         # Getting SWAT .pcp data
@@ -349,7 +349,7 @@ class OSFWF_DailyAssimilation(SWATAlgorithm):
 
         # Run SWAT model
         # Updating climate files
-        CSTATIONS = ClimateStationsSWAT(climstatfilename)
+        CSTATIONS = ClimateStationsSWAT_old(climstatfilename)
         log_file = open(SRC_FOLDER + os.sep + "cstations_log.txt", "w")
         last_pcp_date,last_tmp_date = CSTATIONS.writeSWATrunClimateFiles(SRC_FOLDER,log_file)
         log_file.close()

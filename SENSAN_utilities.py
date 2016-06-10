@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -110,7 +110,7 @@ def CSS_SENSAN(SRC_FOLDER, sns_info):
     f.close
 
     width = 0.9
-    plt.bar(numpy.arange(no_par), CSS_sorted, width, color='b',log=True) # Might add an if statement to figure out whether y-axis should be log.
+    plt.bar(numpy.arange(no_par), CSS_sorted, width, color='b')#,log=True) # Might add an if statement to figure out whether y-axis should be log.
     plt.ylabel('Composite Scaled Sensitivity (-)')
     plt.xticks(numpy.arange(no_par)+width/2, p, size='xx-small', rotation=90)
     figname = SRC_FOLDER + os.sep + 'CSS_barplot.pdf'

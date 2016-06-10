@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -213,6 +213,11 @@ def LoadData(Ass_folder, nbrch, Enddate, Startdate):
 
 def EstimateLosses(src_folder,Startdate,Enddate,nbrch):
     LOSS = numpy.zeros([nbrch])
+    if os.path.isfile(src_folder + os.sep + 'loss.dat'):
+        loss_lines = open(src_folder + os.sep + 'loss.dat', 'rb').readlines()
+        for j in range(0,nbrch):
+            l = loss_lines[j].split()
+            LOSS[j] = float(l[0])
 
     return LOSS
 

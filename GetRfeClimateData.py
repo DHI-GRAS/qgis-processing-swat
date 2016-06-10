@@ -16,7 +16,7 @@
 * by the Free Software Foundation, either version 3 of the License,       *
 * or (at your option) any later version.                                  *
 *                                                                         *
-* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY * 
+* WOIS is distributed in the hope that it will be useful, but WITHOUT ANY *
 * WARRANTY; without even the implied warranty of MERCHANTABILITY or       *
 * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License   *
 * for more details.                                                       *
@@ -150,13 +150,13 @@ def Rfe2GeoTIFF_WGS84(BIL_filelist, dst_folder, log_file, progress, iteration, n
         TIFF_filename = dst_folder + os.sep + file_date.strftime('%Y%m%d') + '_' + filename[0:5] + '.tif'
 
         # check if the output file already exists and if it does try to delete it
-        try:
-            if os.path.exists(TIFF_filename):
-                os.remove(TIFF_filename)
-            call_gdal_translate(BIL_filename, TIFF_filename, subset_extent, progress)
-        except Exception, e:
-            progress.setText('Cannot remove existing file '+TIFF_filename+'. No update done on that file.')
-
+##        try:
+##            if os.path.exists(TIFF_filename):
+##                os.remove(TIFF_filename)
+##            call_gdal_translate(BIL_filename, TIFF_filename, subset_extent, progress)
+##        except Exception, e:
+##            progress.setText('Cannot remove existing file '+TIFF_filename+'. No update done on that file.')
+        call_gdal_translate(BIL_filename, TIFF_filename, subset_extent, progress)
     progress.setPercentage(iteration/number_of_iterations*100)
     return iteration
 
@@ -172,11 +172,11 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
             inlayer = gdal.Open(in_filename, GA_ReadOnly)
             #inlayer = dataobjects.getObjectFromUri(in_filename)
         except:
-            progress.setText('Cannot get layer info ! Not subsetting.')
+            progress.setConsoleInfo('Cannot get layer info ! Not subsetting.')
             return
 
         if not inlayer:
-            progress.setText('Cannot get layer info !! Not subsetting.')
+            progress.setConsoleInfo('Cannot get layer info !! Not subsetting.')
             return
 
 
@@ -219,8 +219,10 @@ def call_gdal_translate(in_filename, out_filename, newExtent, progress):
         # call gdal_translateconvertformat
         progress.setText('Processing '+out_filename)
         print('Processing '+out_filename)
-        param = {'INPUT':in_filename, 'OUTSIZE':100, 'OUTSIZE_PERC':True, 'NO_DATA':"none", 'EXPAND':0, 'SRS':"EPSG:4326",'PROJWIN':subsetExtent, 'SDS':False, 'EXTRA':'-co "COMPRESS=LZW"', 'OUTPUT':out_filename}
-        processing.runalg('gdalogr:translate',param)
+        #param = {'INPUT':in_filename, 'OUTSIZE':100, 'OUTSIZE_PERC':True, 'NO_DATA':"none", 'EXPAND':0, 'SRS':"EPSG:4326",'PROJWIN':subsetExtent,'SDS':False, 'EXTRA':'-co "COMPRESS=LZW"', 'OUTPUT':out_filename}
+        #processing.runalg('gdalogr:translate',param)
+        processing.runalg("gdalogr:translate",in_filename,100,True,"",0,"EPSG:4326",subsetExtent,False,5,4,75,6,1,False,0,False,"",out_filename)
 
     except Exception as e:
-        progress.setText(sys.exc_info()[0])
+      #  progress.setText(sys.exc_info()[0])
+         progress.setConsoleInfo('Fail')
