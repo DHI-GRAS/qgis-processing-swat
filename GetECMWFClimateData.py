@@ -47,15 +47,12 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
     if not os.path.isdir(DownloadDirectory):
         os.mkdir(DownloadDirectory)
 
-    # Get max enddate and min startdate from website
-    UrlToRead = 'http://data-portal.ecmwf.int/data/d/interim_full_daily/'
-    dst_file = DownloadDirectory + os.sep + 'Portal_site.txt'
-    urllib.urlretrieve(UrlToRead, dst_file)
-    text = open(dst_file,'r').read()
-    index = text.find('<span id="date_end_date">')
-    max_enddate = datetime.strptime((text[index+25:index+35]), "%Y-%m-%d").date()
-    index = text.find('<span id="date_start_date">')
-    min_startdate = datetime.strptime((text[index+27:index+37]), "%Y-%m-%d").date()
+    # Get max enddate (updated once a month, with two months delay: for June 2016, end of March) and min startdate (1979-01-01)
+    enddate_adjust = (datetime.now()-timedelta(days = 60)).date()
+    max_enddate = date(enddate_adjust.year,enddate_adjust.month,1) - timedelta(days=1)
+
+
+    min_startdate = datetime.strptime(('1979-01-01'), "%Y-%m-%d").date()
     if startdate < min_startdate:
         startdate = min_startdate
         progress.setConsoleInfo("Start date corrected to: " + startdate.strftime('%Y%m%d') + "...")
@@ -76,82 +73,38 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
 
     # Start data server
     server = ECMWFDataServer(
-           'http://data-portal.ecmwf.int/data/d/dataserver/',
+           'https://api.ecmwf.int/v1',
            token,email)
 
-    # Run one year at a time
-    for year in range(FirstYear,LastYear+1):
-        dst_file = DownloadDirectory + os.sep + str(year) + '.grb'
-        if year == LastYear:
-            if FirstYear < LastYear:
-                first_month = 1
-            else:
-                first_month = FirstMonth
+    #Run all at a time
+    dst_file = DownloadDirectory + os.sep + startdate.strftime('%Y%m%d') + '_to_' + enddate.strftime('%Y%m%d') + '.grb'
+    GetECMWF(server, FirstYear, FirstMonth, FirstDay, LastYear, LastMonth, LastDay, LeftLon, RightLon, TopLat, BottomLat, dst_file)
+    tiff_filelist = gdal2GeoTiff_ECMWF_WGS84(dst_file, progress)
 
-            for m in range(first_month,LastMonth+1):
-                progress.setConsoleInfo("Downloading ECMWF temperature data for " + str(year) + " month " + str(m) + "...")
-                if m == LastMonth:
-                    GetECMWF(server, year, m, 1, year, m, LastDay, LeftLon, RightLon, TopLat, BottomLat, dst_file)
-                else:
-                    end_month = date(year,1+m,1) - timedelta(days=1)
-                    GetECMWF(server, year, m, 1, year, m, end_month.day, LeftLon, RightLon, TopLat, BottomLat, dst_file)
-                # Translate to GeoTIFF
-                tiff_filelist = gdal2GeoTiff_ECMWF_WGS84(dst_file, progress)
+    Max_Daily_FileList, Min_Daily_FileList = ECMWF2DailyMaps(tiff_filelist, progress)
 
-                # Do map calculations
-                Max_Daily_FileList, Min_Daily_FileList = ECMWF2DailyMaps(tiff_filelist, progress)
-
-                # Move files and clean up
-                for f in Max_Daily_FileList:
-                    shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Max_Daily_FileList:
-                    try:    
-                        os.remove(f)
-                    except:
-                        pass
-                for f in Min_Daily_FileList:
-                    shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Min_Daily_FileList:    
-                    try:
-                        os.remove(f)
-                    except:
-                        pass
-
-        else:
-            for m in range(1,12+1):
-                progress.setConsoleInfo("Downloading ECMWF temperature data for " + str(year) + " month " + str(m) + "...")
-                if m == 12:
-                    GetECMWF(server, year, m, 1, year, m, 31, LeftLon, RightLon, TopLat, BottomLat, dst_file)
-                else:
-                    end_month = date(year,1+m,1) - timedelta(days=1)
-                    GetECMWF(server, year, m, 1, year, m, end_month.day, LeftLon, RightLon, TopLat, BottomLat, dst_file)
-
-                # Translate to GeoTIFF
-                tiff_filelist = gdal2GeoTiff_ECMWF_WGS84(dst_file, progress)
-
-                # Do map calculations
-                Max_Daily_FileList, Min_Daily_FileList = ECMWF2DailyMaps(tiff_filelist, progress)
-
-                # Move files and clean up
-                for f in Max_Daily_FileList:
-                    shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Max_Daily_FileList:
-                    try:    
-                        os.remove(f)
-                    except:
-                        pass
-                for f in Min_Daily_FileList:
-                    shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
-                for f in Min_Daily_FileList:    
-                    try:
-                        os.remove(f)
-                    except:
-                        pass
-
+   # Move files and clean up
+    for f in Max_Daily_FileList:
         try:
-            shutil.rmtree(DownloadDirectory) # Remove Temp dir
+            shutil.copy(f, tmax_dst_folder + os.sep + os.path.split(f)[1])
         except:
             pass
+    for f in Min_Daily_FileList:
+        try:
+            shutil.copy(f, tmin_dst_folder + os.sep + os.path.split(f)[1])
+        except:
+            pass
+
+    for f in os.listdir(DownloadDirectory):
+        try:
+            os.remove(f)
+        except:
+            pass
+
+    try:
+        shutil.rmtree(DownloadDirectory) # Remove Temp dir
+    except:
+        pass
 
 
     server = None
@@ -159,10 +112,10 @@ def ECMWFImport(email, token, startdate, enddate, tmax_dst_folder, tmin_dst_fold
 
 def GetECMWF(server, FirstYear, FirstMonth, FirstDay, LastYear, LastMonth, LastDay, LeftLon, RightLon, TopLat, BottomLat, dst_file):
     server.retrieve({
-        'dataset' : "interim_full_daily",
-        'date'    : str(FirstYear) + str(FirstMonth).zfill(2) + str(FirstDay).zfill(2) + '/to/' + str(LastYear) + str(LastMonth).zfill(2) + str(LastDay).zfill(2),
+        'dataset' : "interim",
+        'date'    : str(FirstYear) +'-'+ str(FirstMonth).zfill(2) +'-'+ str(FirstDay).zfill(2) + '/to/' + str(LastYear) +'-'+ str(LastMonth).zfill(2) +'-'+ str(LastDay).zfill(2),
         'time'    : "00:00:00/06:00:00/12:00:00/18:00:00",
-        'grid'    : "1/1",
+        'grid'    : "0.75/0.75",
         'step'    : "0",
         'levtype' : "sfc",
         'type'    : "an",
