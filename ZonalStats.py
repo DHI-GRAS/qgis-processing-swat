@@ -151,8 +151,8 @@ def ZonalStats(Startdate, Enddate, model_folder, model_name, InVName, sb_column,
             # Create maps for each subcatchment for use in coefficients map method
             # Create array with a unique number for each pixel. Area as rastarized vector map and resolution as raster data map
             unique_array = numpy.resize(range(1,int((V_Xmax-V_Xmin)/abs(R_Xres))*int((V_Ymax-V_Ymin)/abs(R_Yres))+1),[int((V_Ymax-V_Ymin)/abs(R_Yres)),int((V_Xmax-V_Xmin)/abs(R_Xres))])
-            x_factor = sc.shape[1]/float(unique_array.shape[1]) # x resoution factor between rasterized vector and unique_array
-            y_factor = sc.shape[0]/float(unique_array.shape[0]) # y resoution factor between rasterized vector and unique_array
+            x_factor = round(sc.shape[1]/float(unique_array.shape[1])) # x resoution factor between rasterized vector and unique_array
+            y_factor = round(sc.shape[0]/float(unique_array.shape[0])) # y resoution factor between rasterized vector and unique_array
             unique_array_resample = numpy.zeros(sc.shape) # initializing array for resampling
             ones_array = numpy.ones([y_factor,x_factor]) # work array
             # Resampling
