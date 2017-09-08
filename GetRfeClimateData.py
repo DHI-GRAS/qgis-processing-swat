@@ -114,7 +114,7 @@ def RfeImportDays(startdate, enddate, TargetDirectory, log_file, progress, itera
             # Downloading climate data
             try:
                 daystr = str(i)+str(j)
-                UrlToRead ='http://earlywarning.usgs.gov/ftp2/bulkdailydata/africa/rfe2/days/rain_' + daystr + '.tar.gz'
+                UrlToRead ='https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/daily/rfe/downloads/daily/rain_' + daystr + '.tar.gz'
                 dst_file = DownloadDirectory + os.sep + 'rain_' + daystr + '.tar.gz'
                 rday=urllib.urlretrieve(UrlToRead, dst_file)
                 # Extract
