@@ -50,7 +50,7 @@ def RfeImportYear(year, TargetDirectory, log_file, progress, iteration, number_o
 
     # Downloading climate data
     try:
-        UrlToRead ='http://earlywarning.usgs.gov/ftp2/bulkdailydata/africa/rfe2/years/rfe_' + str(year) + '.tar.gz'
+        UrlToRead ='https://edcintl.cr.usgs.gov/downloads/sciweb1/shared/fews/web/africa/daily/rfe/downloads/yearly/rfe_' + str(year) + '.tar.gz'
         dst_file = DownloadDirectory + os.sep + 'rfe_' + str(year) + '.tar.gz'
         rday=urllib.urlretrieve(UrlToRead, dst_file)
         progress.setPercentage(iteration/number_of_iterations*100)
